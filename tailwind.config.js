@@ -11,6 +11,9 @@ module.exports = {
           '100%': { transform: 'scale(4)', opacity: '0' },
         },
       },
+      fontFamily: {
+        sans: ['Righteous', 'cursive', 'ui-sans-serif', 'system-ui'],
+      },
       animation: {
         ripple: 'ripple 600ms linear',
       },

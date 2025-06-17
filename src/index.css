@@ -1,1 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-righteous: 'Righteous', cursive;
+  --font-sans: 'Righteous', cursive, ui-sans-serif, system-ui;
+
+  --color-primary: #385484;
+  --color-secondary: #DDB742;
+  --color-tertiary: #698EA4;
+  --color-dark: #16243B;
+  --color-accent: #35BCFF;
+}
+/* 
+body {
+  font-family: var(--font-righteous);
+} */
