@@ -56,7 +56,7 @@ const Register = () => {
             className="block py-4 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-3 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" 
             onChange={(e) => setData((d) =>({ ...d, confirmPassword: e.target.value}))}
             />
-             <div className="flex justify-center">
+            <div className="flex justify-center">
                 <MyButton text={'Kirik'} className=''/>
             </div>
             <div className="flex">

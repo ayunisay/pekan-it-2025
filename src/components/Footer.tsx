@@ -3,8 +3,8 @@ import { Link } from 'react-router';
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-slate-400 via-slate-500 to-slate-600 py-16 px-8">
-      <div className="max-w-6xl mx-auto">
+    <footer className="bg-gradient-to-b from-tertiary via-[#5a7ba8] to-[#2d4a73] py-16 px-8">
+      <div className="max-w-6xl mx-auto border-t border-slate-400 pt-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-1">
             <h2 className="text-white text-2xl font-bold mb-2">AcaConnect</h2>

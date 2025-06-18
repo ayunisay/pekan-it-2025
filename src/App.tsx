@@ -6,10 +6,12 @@ import Login from "./pages/auth/Login"
 import Profile from "./pages/profile/Profile"
 import PomodoroTimer from "./pages/pomodoro/Pomodoro"
 import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
 
 function App() {
   return (
   <>
+    <div className="bg-tertiary min-h-screen flex flex-col">
       <Navbar />
       <Routes>
         <Route index element={<Dashboard />}/>
@@ -19,7 +21,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/pomodoro" element={<PomodoroTimer />} />
       </Routes>
-    </>
+      <Footer />
+    </div>
+  </>
   )
 }
 
