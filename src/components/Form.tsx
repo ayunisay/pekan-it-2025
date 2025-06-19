@@ -42,10 +42,10 @@ const MyFormInput: React.FC<FormInputProps> = ({
         id={inputId}
         value={value}
         onChange={onChange}
-        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none dark:text-gray-900 dark:border-gray-600 focus:outline-none focus:ring-0 peer
+        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer
           ${hasError 
-            ? 'border-red-500 dark:border-red-500 focus:border-red-600 dark:focus:border-red-500' 
-            : 'border-gray-300 focus:border-blue-600 dark:focus:border-blue-500'
+            ? 'border-red-500 focus:border-red-600' 
+            : 'border-gray-300 focus:border-blue-600'
           }
           ${className}
         `.trim().replace(/\s+/g, ' ')}
@@ -58,8 +58,8 @@ const MyFormInput: React.FC<FormInputProps> = ({
         htmlFor={inputId} 
         className={`peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6
           ${hasError 
-            ? 'text-red-500 dark:text-red-500 peer-focus:text-red-600 peer-focus:dark:text-red-500' 
-            : 'text-gray-500 dark:text-gray-400 peer-focus:text-blue-600 peer-focus:dark:text-blue-500'
+            ? 'text-red-500 peer-focus:text-red-600' 
+            : 'text-gray-500 peer-focus:text-blue-600'
           }
         `.trim().replace(/\s+/g, ' ')}
       >
@@ -68,7 +68,7 @@ const MyFormInput: React.FC<FormInputProps> = ({
       </label>
       
       {hasError && (
-        <p className="mt-1 text-sm text-red-500 dark:text-red-400">
+        <p className="mt-1 text-sm text-red-500">
           {error}
         </p>
       )}
@@ -92,7 +92,7 @@ const MyForm: React.FC<FormProps> = ({
   return (
     <div className="max-w-md mx-auto">
       {title && (
-        <h2 className="text-2xl font-bold text-black dark:text-black mb-6 text-center">
+        <h2 className="text-2xl font-bold text-black mb-6 text-center">
           {title}
         </h2>
       )}
