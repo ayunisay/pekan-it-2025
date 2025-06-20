@@ -4,6 +4,7 @@
 @theme {
   --font-righteous: 'Righteous', cursive;
   --font-sans: 'Righteous', cursive, ui-sans-serif, system-ui;
+  --font-helvetica: 'Helvetica';
 
   --color-primary: #385484;
   --color-secondary: #DDB742;
