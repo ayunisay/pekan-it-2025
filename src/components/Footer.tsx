@@ -1,9 +1,15 @@
-import React from 'react';
 import { Link } from 'react-router';
 
-export default function Footer() {
+type FooterProps = {
+  className? :string
+}
+
+const Footer: React.FC<FooterProps> = ({
+  className = '',
+  ...rest
+}) => {
   return (
-    <footer className="bg-gradient-to-b from-tertiary via-[#5a7ba8] to-[#2d4a73] py-16 px-8">
+    <footer className="bg-gradient-to-b from-tertiary via-[#5a7ba8] to-primary py-16 px-8">
       <div className="max-w-6xl mx-auto border-t border-slate-400 pt-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-1">
@@ -11,15 +17,15 @@ export default function Footer() {
             <p className="text-slate-200 text-sm">Academy & Connection</p>
           </div>
 
-         <div className="col-span-1">
-            <h3 className="text-white text-lg font-semibold mb-4">Study?</h3>
-            <ul className="space-y-2">
-                <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Find Friends</Link></li>
-                <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Grade</Link></li>
-                <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Chats</Link></li>
-                <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Tugas & Fokus</Link></li>
-            </ul>
+        <div className="col-span-1">
+          <h3 className="text-white text-lg font-semibold mb-4">Study?</h3>
+          <ul className="space-y-2">
+              <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Home</Link></li>
+              <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Find Friends</Link></li>
+              <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Grade</Link></li>
+              <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Chats</Link></li>
+              <li><Link to="#" className="text-slate-200 hover:text-white transition-colors">Tugas & Fokus</Link></li>
+          </ul>
         </div>
 
 
@@ -69,3 +75,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default Footer

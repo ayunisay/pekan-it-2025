@@ -5,7 +5,7 @@ type ButtonProps = {
   /**
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'accent';
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'accent' ;
   /**
    * @default 'medium'
    */

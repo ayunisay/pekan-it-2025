@@ -78,7 +78,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link to='/find' className={linkClass('/find')} onClick={() => setIsMenuOpen(false)}>
+                <Link to='/friend' className={linkClass('/find')} onClick={() => setIsMenuOpen(false)}>
                   Find Friends
                 </Link>
               </li>

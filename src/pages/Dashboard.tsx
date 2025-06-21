@@ -130,7 +130,7 @@ export const Dashboard = () => {
 
       <div className="relative mt-20 w-full flex justify-center">
         <div className="w-full h-[30rem] bg-primary/70 rounded-3xl relative overflow-hidden shadow-lg">
-          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-[30rem] h-20 bg-tertiary rounded-3xl flex items-center justify-center">
+          <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-[25rem] sm:w-[30rem] md:w-[40rem] lg:w-[45rem] h-20 bg-tertiary rounded-3xl flex items-center justify-center transition-all duration-300 ease-in-out">
             <h2 className="text-white text-3xl font-bold font-sans tracking-wide">Apa Kata Mereka?</h2>
           </div>
 
