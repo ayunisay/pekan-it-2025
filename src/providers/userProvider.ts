@@ -1,11 +1,10 @@
 import instance from "./instance.ts";
 
-const USER = 'user'
+const USER = 'users'
 
 export const register = async (data: any) => {
     try{
-        const res = await instance.post(`${USER}/`, data)
-        console.log("Data regis: ", res)
+        const res = await instance.post(`${USER}`, data)
         return res.data.data
     } catch (e) {
         console.error(e, "Error in registerUser API");
@@ -16,7 +15,6 @@ export const register = async (data: any) => {
 export const login = async (data: any) => {
     try{
         const res = await instance.post(`${USER}/login`, data)
-        console.log("Data login: ", res)
         return res.data.data
     } catch (e) {
         console.error(e, "Error in login API");
@@ -64,6 +62,16 @@ export const getUsers = async () => {
         return res.data.data
     } catch (e) {
         console.error(e, "Error in get email API");
+        throw e;
+    }
+}
+
+export const verifyToken = async (token: any) => {
+    try{
+        const res = await instance.post(`${USER}/verify-token`, token)
+        return res.data.data
+    } catch (e) {
+        console.error(e, "Error in login API");
         throw e;
     }
 }
