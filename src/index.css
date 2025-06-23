@@ -11,8 +11,11 @@
   --color-tertiary: #698EA4;
   --color-dark: #16243B;
   --color-accent: #35BCFF;
+  --color-grey-accent:#D9D9D9;
+
+  --color-todo-cyan:#5CE3B1;
+  --color-todo-dark-blue:'#16243B';
+  --color-todo-yellow:'#DDB742';
+  --color-todo-dongker:'#385484';
+  --color-todo-sage:#00FFFF;
 }
-/* 
-body {
-  font-family: var(--font-righteous);
-} */
