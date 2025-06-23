@@ -1,51 +1,86 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { MyButton } from '../../components/Button'
 import { MyForm, MyFormInput } from '../../components/Form'
-import { Link } from 'react-router'
-import Register from './Register'
+import { Link, useNavigate } from 'react-router'
+import MyPopup from '../../components/Popup'
+import { login } from '../../providers/userProvider'
+import Cookies from 'js-cookie'
 
 const Login = () => {
-    const [data, setData] = useState({
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [inputs, setInputs] = useState({
         email: '',
         password: '',
         confirmPassword: ''
-    })
-    const handleLogin = () => {
-      if(data.confirmPassword != data.password){
-        return <p>Salah woi</p>
+  })
+
+  const navigate = useNavigate(); 
+
+    const handleLogin = async () => {
+      try{
+        const data = await login(inputs);
+        setShowSuccessPopup(true);
+        Cookies.set('token', data.token, {
+          expires: 7,
+          secure: true
+        })
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+          navigate('/')
+        }, 1500)
+      } catch (e){
+        setErrorMessage('Login failed. Please try again.');
+        setShowErrorPopup(true);
+        console.log('Error', e);
       }
     }
 
   return (
-     <div className='flex justify-center items-center bg-blue-500 min-h-screen p-8'>
+      <div className='flex justify-center items-center min-h-screen p-8'>
         <div className='w-full max-w-2xl rounded-xl shadow-2xl bg-white p-12'>
+          {showSuccessPopup && (
+            <MyPopup
+                isOpen={showSuccessPopup}
+                title='Success Register'
+                message='Alhamdulillah berhasil'
+                variant='success'
+                onClose={() => setShowSuccessPopup(false)}
+              />
+            )}
+
+            {showErrorPopup && (
+              <MyPopup
+                isOpen={showErrorPopup}
+                title='Register Gagal'
+                message={errorMessage || 'Terjadi kesalahan.'}
+                variant='error'
+                onClose={() => setShowErrorPopup(false)}
+              />
+          )}
         <MyForm title="Login" className='space-y-6'>
             <MyFormInput
             label="Email"
             name="email"
             type="email"
-            value={`${data.email}`}
+            value={`${inputs.email}`}
             className="block py-4 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-3 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" 
-            onChange={(e) => setData((d) =>({ ...d, email: e.target.value}))}
+            onChange={(e) => setInputs((d) =>({ ...d, email: e.target.value}))}
             />
             <MyFormInput
             label="Password"
             name="password"
             type="password"
-            value={`${data.password}`}
+            value={`${inputs.password}`}
             className="block py-4 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-3 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" 
-            onChange={(e) => setData((d) =>({ ...d, password: e.target.value}))}
-            />
-            <MyFormInput
-            label="Confirm Password"
-            name="password"
-            type="password"
-            value={`${data.confirmPassword}`}
-            className="block py-4 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-3 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" 
-            onChange={(e) => setData((d) =>({ ...d, confirmPassword: e.target.value}))}
+            onChange={(e) => setInputs((d) =>({ ...d, password: e.target.value}))}
             />
             <div className="flex justify-center">
-              <MyButton text={'Kirik'} className=''/>
+              <MyButton
+                text={'Kirik'}
+                onClick={handleLogin}
+                />
             </div>
             <div className="flex">
               <p>
