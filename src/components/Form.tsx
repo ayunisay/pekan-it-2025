@@ -78,33 +78,28 @@ const MyFormInput: React.FC<FormInputProps> = ({
 
 type FormProps = {
   children: React.ReactNode;
-  onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
   title?: string;
-} & React.FormHTMLAttributes<HTMLFormElement>;
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const MyForm: React.FC<FormProps> = ({
   children,
-  onSubmit,
   title,
   className = '',
   ...rest
 }) => {
   return (
-    <div className="max-w-md mx-auto">
+    <div className="max-w-md mx-auto" {...rest}>
       {title && (
         <h2 className="text-2xl font-bold text-black mb-6 text-center">
           {title}
         </h2>
       )}
-      <form 
-        onSubmit={onSubmit}
-        className={`space-y-4 ${className}`}
-        {...rest}
-      >
+      <div className={`space-y-4 ${className}`}>
         {children}
-      </form>
+      </div>
     </div>
   );
 };
+
 
 export { MyFormInput, MyForm };

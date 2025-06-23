@@ -69,6 +69,7 @@ export const MyButton: React.FC<ButtonProps> = ({
   return (
     <button
       onClick={onClick}
+      type='button'
       disabled={disabled || loading}
       className={buttonClasses}
       {...rest}

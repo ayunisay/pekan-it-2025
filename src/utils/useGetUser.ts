@@ -87,7 +87,6 @@ const useGetUser = (): UseGetUserReturn => {
 
   const logout = (redirectToLogin: boolean = true): void => {
     Cookies.remove('token');
-    Cookies.remove('refreshToken');
     
     userCache = null;
     lastFetchTime = null;
