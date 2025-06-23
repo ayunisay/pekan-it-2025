@@ -4,7 +4,7 @@ import profileIcon2 from "../assets/icons/profileIcon2.png";
 import tugasIcon1 from "../assets/icons/tugasIcon1.png";
 import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation } from "react-router";
-import { IoIosMenu, IoMdClose } from "react-icons/io";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -53,9 +53,9 @@ const isActive = (path: string) => {
               className="text-white focus:outline-none"
             >
               {isMenuOpen ? (
-                <IoMdClose className="w-6 h-6 text-current" />
+                <Menu className="w-6 h-6 text-current" />
               ) : (
-                <IoIosMenu className="w-6 h-6 text-current" />
+                <X className="w-6 h-6 text-current" />
               )}
             </button>
           </div>

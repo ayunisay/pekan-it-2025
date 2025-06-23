@@ -1,7 +1,7 @@
 import React from "react";
-import { CiMenuKebab } from "react-icons/ci";
 import profilePic from "../assets/images/profile.png";
 import ProgressBar from "./ProgressBar";
+import { MoreVertical } from "lucide-react";
 
 const TodoDisplay = () => {
   return (
@@ -19,7 +19,7 @@ const TodoDisplay = () => {
               />
             ))}
           </div>
-          <CiMenuKebab className="w-6 h-6 text-white" />
+          <MoreVertical className="w-6 h-6 text-white" />
         </div>
           <Todo 
           progress={t.progress}

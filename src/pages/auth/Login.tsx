@@ -17,7 +17,7 @@ const Login = () => {
     }
 
   return (
-     <div className='flex justify-center items-center bg-blue-500 min-h-screen p-8'>
+      <div className='flex justify-center items-center bg-blue-500 min-h-screen p-8'>
         <div className='w-full max-w-2xl rounded-xl shadow-2xl bg-white p-12'>
         <MyForm title="Login" className='space-y-6'>
             <MyFormInput

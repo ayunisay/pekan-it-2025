@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import { MyButton } from '../../components/Button';
-import { BiPlus } from 'react-icons/bi';
 
 const AddTodo = () => {
   const [taskType, setTaskType] = useState('Pribadi');
@@ -108,7 +107,7 @@ const AddTodo = () => {
               <h3 className="text-white font-medium mb-3">Member</h3>
               <MyButton 
               text="Add Member"
-              icon={BiPlus}
+              icon={Plus}
               variant='accent'
               />
             </div>

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import TodoDisplay from "../../components/TodoDisplay";
 import { MyButton } from "../../components/Button";
-import { FaPlus } from "react-icons/fa";
 import TodoTile from "../../components/TodoTile";
+import { Plus } from "lucide-react";
 
 const TodoList = () => {
   const [todoChecked, setTodoChecked] = useState(false); //Asal ada aja
@@ -14,7 +14,7 @@ const TodoList = () => {
         <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center mb-6 sm:mb-8 lg:mb-12 gap-4 sm:gap-0">
           <MyButton
             text="Add New Task"
-            icon={FaPlus}
+            icon={Plus}
             variant="accent"
             size="medium"
             className="w-full sm:w-auto"
