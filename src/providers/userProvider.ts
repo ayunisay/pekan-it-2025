@@ -1,10 +1,10 @@
-import instance from "./instance.ts";
+import axiosInstance from "./axiosInstance.ts";
 
 const USER = 'user'
 
 export const register = async (data: any) => {
     try{
-        const res = await instance.post(`${USER}/`, data)
+        const res = await axiosInstance.post(`${USER}/`, data)
         console.log("Data regis: ", res)
         return res.data.data
     } catch (e) {
@@ -15,7 +15,7 @@ export const register = async (data: any) => {
 
 export const login = async (data: any) => {
     try{
-        const res = await instance.post(`${USER}/login`, data)
+        const res = await axiosInstance.post(`${USER}/login`, data)
         console.log("Data login: ", res)
         return res.data.data
     } catch (e) {
@@ -26,7 +26,7 @@ export const login = async (data: any) => {
 
 export const getUserById = async (id: string) => {
     try{
-        const res = await instance.get(`${USER}/${id}`)
+        const res = await axiosInstance.get(`${USER}/${id}`)
         console.log("Data : ", res)
         return res.data.data
     } catch (e) {
@@ -37,7 +37,7 @@ export const getUserById = async (id: string) => {
 
 export const getUserByEmail = async (email: string) => {
     try{
-        const res = await instance.get(`${USER}/${email}`)
+        const res = await axiosInstance.get(`${USER}/${email}`)
         console.log("Data : ", res)
         return res.data.data
     } catch (e) {
@@ -48,7 +48,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const deleteUser = async (id: string) => {
     try{
-        const res = await instance.delete(`${USER}/${id}`)
+        const res = await axiosInstance.delete(`${USER}/${id}`)
         console.log("Data : ", res)
         return res.data.data
     } catch (e) {
@@ -59,7 +59,7 @@ export const deleteUser = async (id: string) => {
 
 export const getUsers = async () => {
     try{
-        const res = await instance.get(`${USER}/`)
+        const res = await axiosInstance.get(`${USER}/`)
         console.log("Data : ", res)
         return res.data.data
     } catch (e) {
