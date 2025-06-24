@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import chatBg from "../../assets/images/chatBg.png";
-import chatProfile from "../../assets/images/chatProfile.jpg";
+import chatProfile from "../../assets/images/profile2.jpg";
 import { MyFormInput } from "../../components/Form";
 import { MyButton } from "../../components/Button";
 
