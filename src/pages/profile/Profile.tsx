@@ -2,195 +2,61 @@ import React, { useEffect, useRef, useState } from "react";
 import profilePic from "../../assets/images/profile.png";
 import ProgressBar from "../../components/ProgressBar";
 import { MyButton } from "../../components/Button";
-
-const fakeTasks = [
-  {
-    id: 1,
-    text: "Finish UI for login page",
-    date: "2025-06-08",
-    color: "bg-yellow-400",
-  },
-  { id: 2, text: "Team Sync Meeting", date: "2025-06-10", color: "bg-red-400" },
-  {
-    id: 3,
-    text: "Deploy to staging",
-    date: "2025-06-11",
-    color: "bg-green-400",
-  },
-  {
-    id: 4,
-    text: "Refactor API endpoints",
-    date: "2025-06-11",
-    color: "bg-blue-400",
-  },
-  { id: 5, text: "Fix bug #112", date: "2025-06-14", color: "bg-yellow-400" },
-  {
-    id: 6,
-    text: "Client presentation",
-    date: "2025-06-16",
-    color: "bg-green-400",
-  },
-  {
-    id: 7,
-    text: "Database migration plan",
-    date: "2025-06-17",
-    color: "bg-blue-400",
-  },
-  {
-    id: 8,
-    text: "User testing session",
-    date: "2025-06-17",
-    color: "bg-yellow-400",
-  },
-  {
-    id: 9,
-    text: "Update documentation",
-    date: "2025-06-20",
-    color: "bg-red-400",
-  },
-  {
-    id: 10,
-    text: "Design new icons",
-    date: "2025-06-22",
-    color: "bg-green-400",
-  },
-];
-
-// Calendar component
-const Calendar = ({ tasks }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  const changeMonth = (offset) => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setMonth(newDate.getMonth() + offset);
-      return newDate;
-    });
-  };
-
-  const getCalendarGrid = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const days = [];
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null);
-    }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-    return days;
-  };
-
-  const calendarDays = getCalendarGrid();
-
-  // Get tasks
-  const getTasksForDay = (date) => {
-    if (!date) return [];
-    const dateString = date.toISOString().split("T")[0]; // 'YYYY-MM-DD'
-    return tasks.filter((task) => task.date === dateString);
-  };
-
-  return (
-    <div className="bg-tertiary p-4 sm:p-6 rounded-2xl md:rounded-3xl shadow-lg mt-4 md:mt-6">
-      <div className="flex justify-between items-center mb-4">
-        <button
-          onClick={() => changeMonth(-1)}
-          className="text-white text-2xl font-bold hover:text-amber-400 transition-colors"
-        >
-          ‹
-        </button>
-        <h2 className="text-xl font-bold text-white">
-          {currentDate.toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          })}
-        </h2>
-        <button
-          onClick={() => changeMonth(1)}
-          className="text-white text-2xl font-bold hover:text-amber-400 transition-colors"
-        >
-          ›
-        </button>
-      </div>
-      <div className="grid grid-cols-7 gap-2">
-        {daysOfWeek.map((day) => (
-          <div
-            key={day}
-            className="text-center font-semibold text-gray-300 text-sm py-2"
-          >
-            {day}
-          </div>
-        ))}
-        {calendarDays.map((day, index) => {
-          const tasksOnDay = getTasksForDay(day);
-          const isToday =
-            day && day.toDateString() === new Date().toDateString();
-
-          return (
-            <div
-              key={index}
-              className={`h-16 sm:h-20 flex flex-col items-center justify-center rounded-lg relative transition-colors ${
-                day ? "hover:bg-[#16243B]" : ""
-              } ${isToday ? "bg-[#16243B]" : ""}`}
-            >
-              {day && (
-                <>
-                  <span className="text-base text-white">{day.getDate()}</span>
-                  {tasksOnDay.length > 0 && (
-                    <div className="absolute bottom-2 flex items-center justify-center gap-1">
-                      {tasksOnDay.slice(0, 3).map((task) => (
-                        <div
-                          key={task.id}
-                          className={`w-1.5 h-1.5 rounded-full ${task.color}`}
-                        ></div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
+import type { TaskInterface } from "../../interface/Interface";
+import Calendar from "./Calendar";
 
 const ProfilePage = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+    const handleButtonClick = () => {
+    setIsOpen(true); // Open the popup
+  };
+
+  const handlePopupClose = () => {
+    setIsOpen(false); // Close the popup
+  };
+
   return (
     <>
-      <div className="flex flex-col xl:flex-row w-full min-h-screen p-3 sm:p-4 md:p-6 gap-4 md:gap-6 mt-[7rem] text-white transition-all duration-300 ease-in-out">
-        <div className="flex flex-col items-center w-full xl:w-1/4 xl:max-w-xs gap-4 md:gap-6">
+      <div className="flex flex-col xl:flex-row w-full min-h-screen p-3 sm:p-4 md:p-6 lg:p-8 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-[7rem] text-white transition-all duration-300 ease-in-out">
+        <div className="flex flex-col items-center w-full xl:w-1/4 xl:max-w-xs gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           <div className="relative group">
             <img
               src={profilePic}
               alt="Profile"
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-60 xl:h-60 rounded-full object-cover shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-xl"
+              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 rounded-full object-cover shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-xl"
             />
-            <MyButton text="Edit Profile" variant="accent" />
+            <div className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1">
+              <MyButton 
+                text="Edit Profile" 
+                variant="accent" 
+                className="text-[10px] sm:text-xs md:text-sm px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-lg"
+              />
+            </div>
           </div>
 
           <div className="text-center w-full">
-            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-1 transition-all duration-200">
+            <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold mb-1 sm:mb-2 transition-all duration-200">
               Baskara
             </h2>
-            <p className="text-xs sm:text-sm text-gray-300 mb-3 md:mb-4">
+            <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
               #acno0189
             </p>
 
-            <div className="flex flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               <div className="flex flex-col text-center">
-                <p className="text-lg sm:text-xl md:text-2xl">5</p>
-                <p className="text-xs sm:text-sm text-gray-300">Teman</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold">5</p>
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300">Teman</p>
               </div>
 
-              <MyButton text="Add Friend" variant="accent" />
+              <div className="w-full sm:w-auto">
+                <MyButton 
+                  text="Add Friend" 
+                  variant="accent" 
+                  onClick={handleButtonClick}
+                  className="w-full sm:w-auto px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-2.5 md:py-3 lg:py-3.5 text-sm sm:text-base md:text-lg"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -297,3 +163,56 @@ const Button: React.FC = () => {
 };
 
 export default ProfilePage;
+
+const fakeTasks: TaskInterface[] = [
+  {
+    id: 1,
+    text: "Finish UI for login page",
+    date: "2025-06-08",
+    color: "bg-yellow-400",
+  },
+  { id: 2, text: "Team Sync Meeting", date: "2025-06-10", color: "bg-red-400" },
+  {
+    id: 3,
+    text: "Deploy to staging",
+    date: "2025-06-11",
+    color: "bg-green-400",
+  },
+  {
+    id: 4,
+    text: "Refactor API endpoints",
+    date: "2025-06-11",
+    color: "bg-blue-400",
+  },
+  { id: 5, text: "Fix bug #112", date: "2025-06-14", color: "bg-yellow-400" },
+  {
+    id: 6,
+    text: "Client presentation",
+    date: "2025-06-16",
+    color: "bg-green-400",
+  },
+  {
+    id: 7,
+    text: "Database migration plan",
+    date: "2025-06-17",
+    color: "bg-blue-400",
+  },
+  {
+    id: 8,
+    text: "User testing session",
+    date: "2025-06-17",
+    color: "bg-yellow-400",
+  },
+  {
+    id: 9,  
+    text: "Update documentation",
+    date: "2025-06-20",
+    color: "bg-red-400",
+  },
+  {
+    id: 10,
+    text: "Design new icons",
+    date: "2025-06-22",
+    color: "bg-green-400",
+  },
+];

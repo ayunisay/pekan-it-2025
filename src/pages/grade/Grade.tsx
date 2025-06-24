@@ -1,37 +1,60 @@
 import React from "react";
-import profile from "../../assets/images/profile2.jpg";
+import Profile from "../../assets/images/profile2.jpg";
+import type { UserInterface as User } from "../../interface/Interface";
 
 // dummy
 const friends = [
   {
     id: 1,
     name: "Rangkasatra",
-    avatar: `${profile}`,
+    email: "rangkasatra@example.com",
+    avatar: `${Profile}`,
   },
   {
     id: 2,
-    name: "Rangkasatra",
-    avatar: `${profile}`,
+    name: "Rangkasatra1",
+    email: "rangkasatra1@example.com",
+    avatar: `${Profile}`,
   },
   {
     id: 3,
-    name: "Rangkasatra",
-    avatar: `${profile}`,
+    name: "Rangkasatriya",
+    email: "rangkasatriya@example.com",
+    avatar: `${Profile}`,
   },
   {
     id: 4,
     name: "Rangkasatra",
-    avatar: `${profile}`,
+    email: "rangkasatra2@example.com",
+    avatar: `${Profile}`,
   },
   {
     id: 5,
-    name: "Rangkasatra",
-    avatar: `${profile}`,
+    name: "Rangkasatran",
+    email: "rangkasatran@example.com",
+    avatar: `${Profile}`,
+  },
+  {
+    id: 6,
+    name: "Another User",
+    email: "another.user@example.com",
+    avatar: `${Profile}`,
+  },
+  {
+    id: 7,
+    name: "Yet Another",
+    email: "yet.another@example.com",
+    avatar: `${Profile}`,
   },
 ];
+type StatCardProps = {
+  title: string,
+  content: string,
+  tipColor: string
+}
 
 // stat card component
-const StatCard = ({ title, content, tipColor = "" }) => (
+const StatCard: React.FC<StatCardProps> = ({ title, content, tipColor = "" }) => (
   <div className="bg-[rgba(217,217,217,0.2)] rounded-xl shadow-md w-full h-[4rem] flex items-center overflow-hidden">
     <div className={`w-2 h-full rounded-l-xl ${tipColor}`} />
     <div className="flex justify-between items-center w-full px-4 py-2">
@@ -41,8 +64,12 @@ const StatCard = ({ title, content, tipColor = "" }) => (
   </div>
 );
 
+type FriendListProps = {
+  friend: User
+}
+
 // single friend list item component
-const FriendListItem = ({ friend }) => (
+const FriendListItem: React.FC<FriendListProps> = ({ friend }) => (
   <div className="flex items-center justify-between py-4 px-2 border-b border-gray-700/50">
     <div className="flex items-center gap-4">
       <img

@@ -1,73 +1,114 @@
-import React, { useState } from "react";
+import React, { useState, type ChangeEvent } from "react";
 import Profile from "../../assets/images/profile3.jpg";
 import Mail from "../../assets/icons/mail.png";
 import MailOpen from "../../assets/icons/mailOpen.png";
+import type { UserInterface as User } from "../../interface/Interface";
 
 // dummy
 const allUsers = [
   {
     id: 1,
     name: "Rangkasatra",
+    email: "rangkasatra@example.com",
     avatar: `${Profile}`,
   },
   {
     id: 2,
     name: "Rangkasatra1",
+    email: "rangkasatra1@example.com",
     avatar: `${Profile}`,
   },
   {
     id: 3,
     name: "Rangkasatriya",
+    email: "rangkasatriya@example.com",
     avatar: `${Profile}`,
   },
   {
     id: 4,
     name: "Rangkasatra",
+    email: "rangkasatra2@example.com",
     avatar: `${Profile}`,
   },
   {
     id: 5,
     name: "Rangkasatran",
+    email: "rangkasatran@example.com",
     avatar: `${Profile}`,
   },
-  { id: 6, name: "Another User", avatar: `${Profile}` },
-  { id: 7, name: "Yet Another", avatar: `${Profile}` },
+  {
+    id: 6,
+    name: "Another User",
+    email: "another.user@example.com",
+    avatar: `${Profile}`,
+  },
+  {
+    id: 7,
+    name: "Yet Another",
+    email: "yet.another@example.com",
+    avatar: `${Profile}`,
+  },
 ];
 
 const initialFriends = [
-  { id: 8, name: "Rangkasatra", avatar: `${Profile}` },
-  { id: 9, name: "Rangkasatra", avatar: `${Profile}` },
+  {
+    id: 8,
+    name: "Rangkasatra",
+    email: "rangkasatra3@example.com",
+    avatar: `${Profile}`,
+  },
+  {
+    id: 9,
+    name: "Rangkasatra",
+    email: "rangkasatra4@example.com",
+    avatar: `${Profile}`,
+  },
   {
     id: 10,
     name: "Rangkasatra",
+    email: "rangkasatra5@example.com", 
     avatar: `${Profile}`,
   },
   {
     id: 11,
     name: "Rangkasatra",
+    email: "rangkasatra6@example.com", 
     avatar: `${Profile}`,
   },
   {
     id: 12,
     name: "Rangkasatra",
+    email: "rangkasatra7@example.com",
     avatar: `${Profile}`,
   },
-  { id: 13, name: "Friend Six", avatar: `${Profile}` },
+  {
+    id: 13,
+    name: "Friend Six",
+    email: "friend.six@example.com",
+    avatar: `${Profile}`,
+  },
   {
     id: 14,
     name: "Friend Seven",
+    email: "friend.seven@example.com",
     avatar: `${Profile}`,
   },
   {
     id: 15,
     name: "Friend Eight",
+    email: "friend.eight@example.com",
     avatar: `${Profile}`,
   },
 ];
-
 const friendRequests = allUsers.slice(0, 5); // using 5 dummy users for friend requests
 
-const SearchBar = ({ value, onChange, placeholder }) => (
+type SearchBarProps = {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ value, onChange, placeholder }) => (
   <div className="relative w-full">
     <svg
       className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -93,7 +134,12 @@ const SearchBar = ({ value, onChange, placeholder }) => (
   </div>
 );
 
-const UserListItem = ({ user, onAdd }) => (
+type UserListProps = {
+  user: User,
+  onAdd: () => void;
+}
+
+const UserListItem: React.FC<UserListProps> = ({ user, onAdd }) => (
   <div className="flex items-center justify-between p-3 hover:bg-gray-700/50 rounded-lg transition-colors duration-200">
     <div className="flex items-center gap-4">
       <img
@@ -112,7 +158,11 @@ const UserListItem = ({ user, onAdd }) => (
   </div>
 );
 
-const FriendListItem = ({ friend }) => (
+type FriendListItemProps = {
+  friend: User;
+}
+
+const FriendListItem: React.FC<FriendListItemProps> = ({ friend }) => (
   <div className="flex items-center justify-between p-3 hover:bg-gray-700/50 rounded-lg transition-colors duration-200">
     <div className="flex items-center gap-4">
       <img
@@ -128,7 +178,13 @@ const FriendListItem = ({ friend }) => (
   </div>
 );
 
-const MailIconButton = ({ notification, isOpen, onClick }) => (
+type MailIconButtonProps = {
+  notification: boolean;
+  isOpen: boolean;
+  onClick: () => void;
+}
+
+const MailIconButton: React.FC<MailIconButtonProps> = ({ notification, isOpen, onClick }) => (
   <div className="relative">
     <button
       onClick={onClick}
@@ -151,7 +207,7 @@ const FindFriendsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [friends, setFriends] = useState(initialFriends);
 
-  const handleSearch = (e) => {
+  const handleSearch = (e: any) => {
     setSearchQuery(e.target.value);
     if (e.target.value.length > 0 && view !== "search") {
       setView("search");
