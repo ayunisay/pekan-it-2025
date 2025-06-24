@@ -1,32 +1,32 @@
 import React from "react";
-import chatProfile from "../../assets/images/chatProfile.jpg";
+import profile from "../../assets/images/profile2.jpg";
 
 // dummy
 const friends = [
   {
     id: 1,
     name: "Rangkasatra",
-    avatar: `${chatProfile}`,
+    avatar: `${profile}`,
   },
   {
     id: 2,
     name: "Rangkasatra",
-    avatar: `${chatProfile}`,
+    avatar: `${profile}`,
   },
   {
     id: 3,
     name: "Rangkasatra",
-    avatar: `${chatProfile}`,
+    avatar: `${profile}`,
   },
   {
     id: 4,
     name: "Rangkasatra",
-    avatar: `${chatProfile}`,
+    avatar: `${profile}`,
   },
   {
     id: 5,
     name: "Rangkasatra",
-    avatar: `${chatProfile}`,
+    avatar: `${profile}`,
   },
 ];
 

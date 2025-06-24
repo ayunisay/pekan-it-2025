@@ -7,7 +7,7 @@ import Profile from "./pages/profile/Profile";
 import PomodoroTimer from "./pages/pomodoro/Pomodoro";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import FindFriend from "./pages/FindFriend";
+import FindFriend from "./pages/findFriend/FindFriend";
 import Grade from "./pages/grade/Grade";
 import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
@@ -46,7 +46,7 @@ function App() {
           <Route path="/todo/post" element={<AddTodo />} />
           <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-          <Route path="/friend" element={<FindFriend />} />
+          <Route path="/find" element={<FindFriend />} />
           <Route path="/grade" element={<Grade />} />
           <Route path="/chat" element={<ChatPage />} />
         </Routes>
