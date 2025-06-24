@@ -5,8 +5,13 @@ import tugasIcon1 from "../assets/icons/tugasIcon1.png";
 import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
+import type { UserInterface as User } from "../interface/Interface";
 
-const Navbar = () => {
+interface NavbarProps {
+  user: User | null; //Nullable
+}
+
+const Navbar = ({ user }: NavbarProps) => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTaskOpen, setIsTaskOpen] = useState(false);
@@ -21,10 +26,6 @@ const isActive = (path: string) => {
   const isTugasFokusActive = 
     isActive("/todo") || 
     isActive("/pomodoro");
-
-  // const isLogin = (user: string) => {
-  //   if(!user == null) return true
-  // }
 
   const linkClass = (path: string) => {
     return isActive(path)
@@ -53,9 +54,9 @@ const isActive = (path: string) => {
               className="text-white focus:outline-none"
             >
               {isMenuOpen ? (
-                <Menu className="w-6 h-6 text-current" />
-              ) : (
                 <X className="w-6 h-6 text-current" />
+              ) : (
+                <Menu className="w-6 h-6 text-current" />
               )}
             </button>
           </div>
@@ -81,7 +82,7 @@ const isActive = (path: string) => {
               </li>
               <li>
                 <Link
-                  to="/friend"
+                  to="/find"
                   className={linkClass("/find")} 
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -142,18 +143,17 @@ const isActive = (path: string) => {
 
             <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
               <Link
-                to="/profile"
-                className={`${linkClass("/profile")} group flex flex-col items-center gap-1`}
+                to="/register"
+                className={`${linkClass("/register")} group flex flex-col items-center gap-1`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <img
-                  src={isActive("/profile") ? profileIcon2 : profileIcon1}
+                  src={isActive("/register") ? profileIcon2 : profileIcon1}
                   alt="Profile"
                   className="w-6 group-hover:opacity-70 transition-opacity duration-200"
                 />
                 <p className="text-xs">
-                  {/* {isLogin} ? user.name : Login */}
-                  Baskara
+                  {user ? user.name : 'Login' }
                 </p>
               </Link>
             </div>

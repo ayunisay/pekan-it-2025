@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance.ts";
 
-const USER = 'user'
+const USER = 'users'
 
 export const register = async (data: any) => {
     try{
@@ -15,7 +15,7 @@ export const register = async (data: any) => {
 
 export const login = async (data: any) => {
     try{
-        const res = await axiosInstance.post(`${USER}/login`, data)
+        const res = await instance.post(`${USER}/login`, data)
         console.log("Data login: ", res)
         return res.data.data
     } catch (e) {
@@ -64,6 +64,16 @@ export const getUsers = async () => {
         return res.data.data
     } catch (e) {
         console.error(e, "Error in get email API");
+        throw e;
+    }
+}
+
+export const verifyToken = async (token: any) => {
+    try{
+        const res = await instance.post(`${USER}/verify-token`, token)
+        return res.data.data
+    } catch (e) {
+        console.error(e, "Error in login API");
         throw e;
     }
 }

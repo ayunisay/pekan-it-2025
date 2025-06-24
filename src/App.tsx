@@ -7,19 +7,24 @@ import Profile from "./pages/profile/Profile";
 import PomodoroTimer from "./pages/pomodoro/Pomodoro";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import FindFriend from "./pages/FindFriend";
+import FindFriend from "./pages/findFriend/FindFriend";
+import Grade from "./pages/grade/Grade";
 import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
 import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
+import useGetUser from "./utils/useGetUser";
 
 function App() {
   const location = useLocation();
   const pathCheck =
     location.pathname === "/profile" || location.pathname === "/friend";
+  const { user, loading, error } = useGetUser();
 
   return (
     <>
+      {/* {error}  //soon (Blm dipikirin)*/}
+      {/* {loading} //soon (Bikin circural loading)  */}
       <div
         className={`${
           pathCheck
@@ -27,7 +32,7 @@ function App() {
             : "bg-tertiary"
         } min-h-screen flex flex-col`}
       >
-        <Navbar />
+        <Navbar user={user} />
         <Routes>
           <Route index element={<Dashboard />} />
 
@@ -41,7 +46,8 @@ function App() {
           <Route path="/todo/post" element={<AddTodo />} />
           <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-          <Route path="/friend" element={<FindFriend />} />
+          <Route path="/find" element={<FindFriend />} />
+          <Route path="/grade" element={<Grade />} />
           <Route path="/chat" element={<ChatPage />} />
         </Routes>
         <Footer />
