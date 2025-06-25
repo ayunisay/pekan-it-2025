@@ -9,12 +9,13 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FindFriend from "./pages/findFriend/FindFriend";
 import Grade from "./pages/grade/Grade";
-import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
 import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
+import PrivateChatPage from "./pages/chat/PrivateChatPage";
+import GroupChatPage from "./pages/chat/GroupChatPage";
 
 function App() {
   const location = useLocation();
@@ -49,7 +50,8 @@ function App() {
 
           <Route path="/find" element={<FindFriend />} />
           <Route path="/grade" element={<Grade />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/private-chat" element={<PrivateChatPage />} />
+          <Route path="/group-chat" element={<GroupChatPage />} />
         </Routes>
         <Footer />
       </div>

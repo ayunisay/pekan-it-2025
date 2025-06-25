@@ -1,22 +1,20 @@
-import { Trash, UserRound, UsersRound } from "lucide-react";
+import { EllipsisVertical, UsersRound } from "lucide-react";
 import { truncateString } from "../../utils/string";
 
 type PropsType = {
-  type: "group" | "private";
   name: string;
   lastMessage: string;
-  avatar: string | null;
+  image: string | null;
   isActive: boolean;
   onClick: () => void;
 };
 
-const ChatListItem = ({
+const GroupChatListItem = ({
   name,
   lastMessage,
-  avatar,
+  image,
   isActive,
   onClick,
-  type,
 }: PropsType) => {
   const handleDeleteBtn = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -32,10 +30,8 @@ const ChatListItem = ({
         isActive ? "bg-[#4A5568]" : "hover:bg-[#2D3748]"
       }`}
     >
-      {avatar ? (
-        <img src={avatar} alt={name} className="w-12 h-12 rounded-full mr-4" />
-      ) : type === "private" ? (
-        <UserRound className="w-12 h-12 rounded-full bg-gray-400 p-1" />
+      {image ? (
+        <img src={image} alt={name} className="w-12 h-12 rounded-full mr-4" />
       ) : (
         <UsersRound />
       )}
@@ -51,11 +47,11 @@ const ChatListItem = ({
           type="button"
           onClick={handleDeleteBtn}
         >
-          <Trash className="hidden group-hover:block text-slate-50 transition-all" />
+          <EllipsisVertical className="hidden group-hover:block text-slate-50 transition-all" />
         </button>
       </div>
     </div>
   );
 };
 
-export default ChatListItem;
+export default GroupChatListItem;

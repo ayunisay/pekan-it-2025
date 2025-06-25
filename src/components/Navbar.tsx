@@ -6,6 +6,7 @@ import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
 import type { UserType as User } from "../types/user";
+import { cn } from "../utils/cn";
 
 interface NavbarProps {
   user: User | null; //Nullable
@@ -69,7 +70,11 @@ const isActive = (path: string) => {
             } md:relative md:bg-transparent md:h-auto md:py-0`}
           >
             <ul
-              className={`flex ${isMenuOpen ? "flex-col items-center space-y-8 text-xl" : "flex-row space-x-6"} md:flex-row md:space-x-6 md:space-y-0`}
+              className={`flex ${
+                isMenuOpen
+                  ? "flex-col items-center space-y-8 text-xl"
+                  : "flex-row space-x-6"
+              } md:flex-row md:space-x-6 md:space-y-0`}
             >
               <li>
                 <Link
@@ -83,7 +88,7 @@ const isActive = (path: string) => {
               <li>
                 <Link
                   to="/find"
-                  className={linkClass("/find")} 
+                  className={linkClass("/find")}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Find Friends
@@ -98,23 +103,44 @@ const isActive = (path: string) => {
                   Grade
                 </Link>
               </li>
-              <li>
+              <li className="relative group cursor-pointer">
                 <Link
-                  to="/chat"
-                  className={linkClass("/chat")}
+                  to="#"
+                  className={
+                    location.pathname.includes("chat")
+                      ? "text-yellow-400 hover:text-yellow-300 font-semibold"
+                      : "text-white hover:text-gray-300 font-semibold"
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Chat
+                  Chats
                 </Link>
+                <div className="absolute flex flex-col items-center w-[10rem] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-10 bg-white overflow-hidden">
+                  <Link
+                    className={cn(
+                      "w-full px-4 p-2 hover:text-slate-50 hover:bg-primary transition-colors duration-200", location.pathname === "/private-chat" && "bg-primary text-slate-50") }
+                    to={"/private-chat"}
+                  >
+                    Private Chat
+                  </Link>
+                  <Link
+                    className={cn(
+                      "w-full px-4 p-2 hover:text-slate-50 hover:bg-primary transition-colors duration-200", location.pathname === "/group-chat" && "bg-primary text-slate-50"
+                    )}
+                    to={"/group-chat"}
+                  >
+                    Group Chat
+                  </Link>
+                </div>
               </li>
               <li className="group relative flex flex-row justify-center items-center">
                 <button
                   onClick={() => setIsTaskOpen(!isTaskOpen)}
                   className={`${
-                    isTugasFokusActive 
+                    isTugasFokusActive
                       ? linkClass("/todo")
                       : linkClass("/yanglaen")
-                  } flex items-center focus:outline-none`} 
+                  } flex items-center focus:outline-none cursor-pointer`}
                 >
                   Tugas & Fokus
                   <img
@@ -127,12 +153,24 @@ const isActive = (path: string) => {
                 {isTaskOpen && (
                   <ul className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-40 bg-white rounded-2xl shadow-lg z-10">
                     <li className="px-4 py-2 hover:bg-primary cursor-pointer rounded-2xl">
-                      <Link to="/todo" onClick={() => { setIsMenuOpen(false); setIsTaskOpen(false); }}>
+                      <Link
+                        to="/todo"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTaskOpen(false);
+                        }}
+                      >
                         To-do List
                       </Link>
                     </li>
                     <li className="px-4 py-2 hover:bg-primary cursor-pointer rounded-2xl">
-                      <Link to="/pomodoro" onClick={() => { setIsMenuOpen(false); setIsTaskOpen(false); }}>
+                      <Link
+                        to="/pomodoro"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTaskOpen(false);
+                        }}
+                      >
                         Pomodoro
                       </Link>
                     </li>
@@ -142,8 +180,10 @@ const isActive = (path: string) => {
             </ul>
             <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
               <Link
-                to={!user ? "/login": "/profile"}
-                className={`${linkClass("/register")} group flex flex-col items-center gap-1`}
+                to={!user ? "/login" : "/profile"}
+                className={`${linkClass(
+                  "/register"
+                )} group flex flex-col items-center gap-1`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <img
@@ -151,9 +191,7 @@ const isActive = (path: string) => {
                   alt="Profile"
                   className="w-6 group-hover:opacity-70 transition-opacity duration-200"
                 />
-                <p className="text-xs">
-                  {user ? user.name : 'Login' }
-                </p>
+                <p className="text-xs">{user ? user.name : "Login"}</p>
               </Link>
             </div>
           </div>

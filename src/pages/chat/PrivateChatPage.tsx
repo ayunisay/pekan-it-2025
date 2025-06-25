@@ -21,7 +21,7 @@ import { cn } from "../../utils/cn";
 import MessageBubble from "../../components/chats/MessageBubble";
 import ChatListItem from "../../components/chats/ChatListItem";
 
-const ChatPage = () => {
+const PrivateChatPage = () => {
   const [selectedUserChat, setSelectedUserChat] = useState<UserType | null>(
     null
   );
@@ -66,6 +66,7 @@ const ChatPage = () => {
       }
     };
     const handleSendPrivateChatMessageError = (error: ResponseApiErrorType) => {
+      console.error(error);
       alert(error.message);
     };
 
@@ -97,6 +98,7 @@ const ChatPage = () => {
         };
         // Error nya
         const handleGetPrivateChatMessage = (error: ResponseApiErrorType) => {
+          console.error(error);
           alert(error.message);
         };
 
@@ -206,7 +208,7 @@ const ChatPage = () => {
                   Array(5)
                     .fill(null)
                     .map((_, idx) => <ChatListSkeleton key={idx} />)
-                ) : !privateChats || privateChats.data?.length === 0 ? (
+                ) : !privateChats.data || privateChats.data?.length === 0 ? (
                   <div className="flex flex-col gap-2 items-center">
                     <p className="text-white">
                       Let's find friends to start chat!
@@ -225,6 +227,7 @@ const ChatPage = () => {
                       userId === chat.userIdOne ? chat.userTwo : chat.userOne;
                     return (
                       <ChatListItem
+                        type="private"
                         key={idx}
                         name={user.name}
                         lastMessage={
@@ -284,6 +287,7 @@ const ChatPage = () => {
                   >
                     {messages?.map((msg) => (
                       <MessageBubble
+                        type="private"
                         message={msg}
                         key={msg.id}
                         isSender={msg.authorId === userId}
@@ -349,4 +353,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage;
+export default PrivateChatPage;
