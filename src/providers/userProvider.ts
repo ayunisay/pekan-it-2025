@@ -15,7 +15,7 @@ export const register = async (data: any) => {
 
 export const login = async (data: any) => {
     try{
-        const res = await instance.post(`${USER}/login`, data)
+        const res = await axiosInstance.post(`${USER}/login`, data)
         console.log("Data login: ", res)
         return res.data.data
     } catch (e) {
@@ -70,7 +70,7 @@ export const getUsers = async () => {
 
 export const verifyToken = async (token: any) => {
     try{
-        const res = await instance.post(`${USER}/verify-token`, token)
+        const res = await axiosInstance.post(`${USER}/verify-token`, token)
         return res.data.data
     } catch (e) {
         console.error(e, "Error in login API");
