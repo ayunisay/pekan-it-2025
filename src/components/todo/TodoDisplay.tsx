@@ -1,6 +1,6 @@
 import React from "react";
-import profilePic from "../assets/images/profile.png";
-import ProgressBar from "./ProgressBar";
+import profilePic from "../../assets/images/profile.png";
+import ProgressBar from "../ProgressBar";
 import { MoreVertical } from "lucide-react";
 
 const TodoDisplay = () => {

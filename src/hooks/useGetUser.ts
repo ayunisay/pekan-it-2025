@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Cookies from 'js-cookie';
 import { verifyToken } from "../providers/userProvider";
-import type { UserInterface as User } from "../interface/Interface";
+import type { ApiError } from "../types/apiType";
+import { useLocation } from "react-router";
+import type { UserType as User } from "../types/user";
 
 type UseGetUserReturn = {
   user: User | null;
@@ -9,11 +11,6 @@ type UseGetUserReturn = {
   error: string | null;
   refetch: () => void;
   logout: (redirectToLogin?: boolean) => void;
-}
-
-type ApiError = {
-  message: string;
-  status?: number;
 }
 
 let userCache: User | null = null;
@@ -27,6 +24,7 @@ const useGetUser = (): UseGetUserReturn => {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(userCache);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   const fetchUser = async (): Promise<void> => {
     const token: string | undefined = Cookies.get('token');
@@ -94,7 +92,7 @@ const useGetUser = (): UseGetUserReturn => {
     setError(null);
     
     if (redirectToLogin && typeof window !== 'undefined') {
-      window.location.href = '/login';
+      location.pathname = '/login';
     }
   };
 

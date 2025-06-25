@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import TodoDisplay from "../../components/TodoDisplay";
+import TodoDisplay from "../../components/todo/TodoDisplay";
 import { MyButton } from "../../components/Button";
-import TodoTile from "../../components/TodoTile";
+import TodoTile from "../../components/todo/TodoTile";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const TodoList = () => {
+  const navigate = useNavigate()
   const [todoChecked, setTodoChecked] = useState(false); //Asal ada aja
 
   return (
@@ -18,6 +20,7 @@ const TodoList = () => {
             variant="accent"
             size="medium"
             className="w-full sm:w-auto"
+            onClick={() => navigate('/todo/post')}
           />
         </div>
 

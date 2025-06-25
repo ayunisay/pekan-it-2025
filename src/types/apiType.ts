@@ -5,6 +5,7 @@ export type ResponseApiType<T> = {
 }
 
 export type ApiError = {
+    status: number;
     response: {
         data: {
             message: string
