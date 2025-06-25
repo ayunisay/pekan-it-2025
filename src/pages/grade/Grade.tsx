@@ -1,6 +1,12 @@
 import React from "react";
 import Profile from "../../assets/images/profile2.jpg";
-import type { UserInterface as User } from "../../interface/Interface";
+
+interface User { //sementara pake dummy dulu
+  id:number
+  name: string
+  email: string
+  avatar: string
+}
 
 // dummy
 const friends = [

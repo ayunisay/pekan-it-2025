@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, Plus } from 'lucide-react';
 import { MyButton } from '../../components/Button';
 
@@ -8,6 +8,7 @@ const AddTodo = () => {
   const [deadline, setDeadline] = useState('');
   const [selectedColor, setSelectedColor] = useState('#5CE3B1');
   const [showDatePicker, setShowDatePicker] = useState(false);
+  // const ['']
 
   const colors = [
     '#5CE3B1', // cyan
@@ -17,9 +18,12 @@ const AddTodo = () => {
     '#00FFFF'  // sage
   ];
 
+  const handleAddTodo = async () => {
+
+  }
+
   return (
   <>
-
     <div className="min-h-screen bg-gradient-to-br flex flex-col items-center justify-center p-4">
     <h1 className="text-white text-2xl font-semibold text-center mb-6">
       New Task

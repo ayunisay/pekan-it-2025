@@ -13,7 +13,8 @@ import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
 import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
-import useGetUser from "./utils/useGetUser";
+import useGetUser from "./hooks/useGetUser";
+import { Skeleton } from "./components/ui/skeleton";
 
 function App() {
   const location = useLocation();
@@ -24,7 +25,7 @@ function App() {
   return (
     <>
       {/* {error}  //soon (Blm dipikirin)*/}
-      {/* {loading} //soon (Bikin circural loading)  */}
+      {loading ? <Skeleton /> : ""}
       <div
         className={`${
           pathCheck

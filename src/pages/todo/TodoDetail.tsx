@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import TodoTile from '../../components/TodoTile';
+import TodoTile from '../../components/todo/TodoTile';
 
 const TodoDetail = () => {
   const [todoChecked, setTodoChecked] = useState(false);

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { TaskInterface } from "../../interface/Interface";
+import type { TaskType } from "../../types/task";
 
 interface CalendarProps {
-  tasks: TaskInterface[];
+  tasks: TaskType[];
 }
 
 const Calendar: React.FC<CalendarProps> = ({ tasks }) => {

@@ -5,7 +5,7 @@ import tugasIcon1 from "../assets/icons/tugasIcon1.png";
 import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
-import type { UserInterface as User } from "../interface/Interface";
+import type { UserType as User } from "../types/user";
 
 interface NavbarProps {
   user: User | null; //Nullable
@@ -140,10 +140,9 @@ const isActive = (path: string) => {
                 )}
               </li>
             </ul>
-
             <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
               <Link
-                to="/register"
+                to={!user ? "/login": "/profile"}
                 className={`${linkClass("/register")} group flex flex-col items-center gap-1`}
                 onClick={() => setIsMenuOpen(false)}
               >

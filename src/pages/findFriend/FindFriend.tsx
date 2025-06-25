@@ -2,7 +2,13 @@ import React, { useState, type ChangeEvent } from "react";
 import Profile from "../../assets/images/profile3.jpg";
 import Mail from "../../assets/icons/mail.png";
 import MailOpen from "../../assets/icons/mailOpen.png";
-import type { UserInterface as User } from "../../interface/Interface";
+
+interface User { //sementara pake dummy dulu
+  id:number
+  name: string
+  email: string
+  avatar: string
+}
 
 // dummy
 const allUsers = [
@@ -100,6 +106,7 @@ const initialFriends = [
     avatar: `${Profile}`,
   },
 ];
+
 const friendRequests = allUsers.slice(0, 5); // using 5 dummy users for friend requests
 
 type SearchBarProps = {
