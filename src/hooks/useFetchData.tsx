@@ -1,6 +1,6 @@
 import _ from "lodash";
 import axiosInstanceDefault from "../providers/axiosInstance";
-import type { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosError, type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from "axios";
 import { useEffect, useState, useRef } from "react";
 import type { ApiError } from "../types/apiType";
 import { isRequestSuccessful, sanitizeData } from "../helpers/apiHelpers";
@@ -127,6 +127,128 @@ export function useFetchData<T>({
       reCallAPI,
     },
   ] as const;
+}
+
+export const usePostData = <T,> (url: string, configs?: AxiosRequestConfig, axiosInstance?: AxiosInstance) => {
+  const [endpointApi, setEndpointApi] = useState<string>(url);
+  const [response, setResponse] = useState<T | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [axiosConfig, setAxiosConfig] = useState<AxiosRequestConfig | undefined>(configs);
+  let axios = axiosInstanceDefault;
+  if (axiosInstance) {
+    axios = axiosInstance;
+  }
+
+  const postData = async (data: FormData | object, resourcId?: string | number):Promise <T> => {
+    setLoading(true);
+    try {
+      const response = await axios.post<T>(
+        `${endpointApi}/${resourcId || ""}`,
+        data,
+        axiosConfig
+      );
+      setResponse(response.data);
+
+      return response.data;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        console.error(err.response?.data);
+        setError(err.response?.data.message);
+        throw new Error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error(err.message);
+        setError(err.message);
+        throw new Error(err.message);
+      } else {
+        console.error("An unknown error occurred");
+        setError("An unknown error occurred");
+        throw new Error("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { response, error, loading, postData, updateRequestConfig: setAxiosConfig };
+}
+
+export const usePutData = <T,>(url: string, configs?: AxiosRequestConfig, axiosInstance?: AxiosInstance) => {
+  const [response, setResponse] = useState<T | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [axiosConfig, setAxiosConfig] = useState<AxiosRequestConfig | undefined>(configs);
+  let axios = axiosInstanceDefault;
+  if (axiosInstance) {
+    axios = axiosInstance;
+  }
+  const putData = async (data: FormData | T, newUrl?: string) => {
+    setLoading(true);
+
+    try {
+      const response = await axios.put<T>(newUrl || url, data, axiosConfig);
+      setResponse(response.data);
+
+      return response.data;
+
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        console.error(err.response?.data);
+        setError(err.response?.data.message);
+        throw new Error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error(err.message);
+        setError(err.message);
+        throw new Error(err.message);
+      } else {
+        console.error("An unknown error occurred");
+        setError("An unknown error occurred");
+        throw new Error("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { response, error, loading, putData, updateRequestConfig: setAxiosConfig };
+}
+
+export const useDeleteData = <T,>(url: string, axiosInstance?: AxiosInstance) => {
+  const [response, setResponse] = useState<T | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  let axios = axiosInstanceDefault;
+  if (axiosInstance) {
+    axios = axiosInstance;
+  }
+  const deleteData = async (id: string | number) => {
+    setLoading(true);
+
+    try {
+      const response = await axios.delete<T>(`${url}/${id}`);
+      setResponse(response.data);
+
+      return response.data;
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        console.error(err.response?.data);
+        setError(err.response?.data.message);
+        throw Error(err.response?.data.message);
+      } else if (err instanceof Error) {
+        console.error(err.message);
+        setError(err.message);
+        throw Error(err.message);
+      } else {
+        console.error("An unknown error occurred");
+        setError("An unknown error occurred");
+        throw Error("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { response, error, loading, deleteData };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

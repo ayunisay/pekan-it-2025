@@ -16,6 +16,7 @@ import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
 import PrivateChatPage from "./pages/chat/PrivateChatPage";
 import GroupChatPage from "./pages/chat/GroupChatPage";
+import BaseToaster from "./components/systems/BaseToaster";
 
 function App() {
   const location = useLocation();
@@ -35,6 +36,7 @@ function App() {
         } min-h-screen flex flex-col`}
       >
         <Navbar user={user} />
+        <BaseToaster />
         <Routes>
           <Route index element={<Dashboard />} />
 
