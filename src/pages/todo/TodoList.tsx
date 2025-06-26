@@ -1,13 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TodoDisplay from "../../components/todo/TodoDisplay";
 import { MyButton } from "../../components/Button";
 import TodoTile from "../../components/todo/TodoTile";
 import { Plus } from "lucide-react";
 import { useNavigate } from "react-router";
+import { getTodoByUser, updateTodo } from "../../providers/TodoProvider";
+import type { TodoType } from "../../types/todo";
+import type { UserType } from "../../types/user";
 
-const TodoList = () => {
+type TodoListProps = {
+  user: UserType | null;
+};
+
+const TodoList: React.FC<TodoListProps> = ({ user }) => {
   const navigate = useNavigate()
-  const [todoChecked, setTodoChecked] = useState(false); //Asal ada aja
+  const [todos, setTodos] = useState<TodoType[]>([])
+  useEffect(() => {
+    const fetchTodo = async () => {
+      if(user == null){
+        return console.log("Kosong");
+      }
+      try{
+        const data = await getTodoByUser(user.id);
+        setTodos(data);
+
+      } catch (e: any) {
+        console.log(`Error fetch todo: ${e}`)
+      }
+    }
+    fetchTodo()
+  }, [user])
+
+  const handleChecklist = async (updatedTodo: TodoType) => {
+    try {
+      const data = {
+        ...updatedTodo,
+        userId: user!.id
+      };
+      const updated = await updateTodo(updatedTodo.id, data);
+
+      setTodos((prevTodos) =>
+        prevTodos.map((t) => (t.id === updatedTodo.id ? updatedTodo : t))
+      );
+
+      console.log(updated);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className="min-h-screen mt-10">
@@ -25,7 +65,7 @@ const TodoList = () => {
         </div>
 
         <div className="mb-8 sm:mb-12 flex flex-row">
-          <TodoDisplay />
+          <TodoDisplay todos={todos}/>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
@@ -36,19 +76,16 @@ const TodoList = () => {
                 Tasks for Today
               </h2>
               <div className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-                {toDoItemData.filter(item => !item.isChecked).length} pending
+                {(todos ?? []).filter(todo => !todo.isChecked).length} pending
               </div>
             </div>
             
             <div className="space-y-2 sm:space-y-3">
-              {toDoItemData.length > 0 ? (
-                toDoItemData.map((item) => (
+              {todos.length > 0 ? (
+                todos.map((item) => (
                   <TodoTile
-                    key={item.id}
-                    isChecked={item.isChecked}
-                    label={item.label}
-                    id={item.id}
-                    onChange={setTodoChecked}
+                    todo={item}
+                    onChange={(checked) => handleChecklist({ ...item, isChecked: checked })}
                   />
                 ))
               ) : (
@@ -69,20 +106,20 @@ const TodoList = () => {
                 Calendar
               </h2>
               <div className="bg-green-100 text-green-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
-                {toDoItemData.filter(item => item.isChecked).length} completed
+                {todos.filter(item => item.isChecked).length} completed
               </div>
             </div>
             
             <div className="space-y-2 sm:space-y-3">
-              {toDoItemData.length > 0 ? (
-                toDoItemData
+              {/* {todos.length > 0 ? ( //sorting pake tanggal
+                todos
                   .sort((a, b) => a.date.getTime() - b.date.getTime())
                   .map((item) => (
                     <TodoTile
                       key={`calendar-${item.id}`}
                       isChecked={item.isChecked}
                       label={item.label}
-                      date={item.date}
+                      date={item.dead}
                       id={item.id}
                       onChange={setTodoChecked}
                     />
@@ -94,7 +131,7 @@ const TodoList = () => {
                     Your calendar is empty. Schedule some tasks!
                   </p>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -102,7 +139,7 @@ const TodoList = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             <div className="bg-grey-accent rounded-lg sm:rounded-xl p-4 sm:p-6 text-center shadow-md">
               <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">
-                {toDoItemData.length}
+                {todos.length}
               </div>
               <div className="text-xs sm:text-sm text-gray-600 font-medium">
                 Total Tasks
@@ -111,7 +148,7 @@ const TodoList = () => {
             
             <div className="bg-grey-accent rounded-lg sm:rounded-xl p-4 sm:p-6 text-center shadow-md">
               <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1 sm:mb-2">
-                {toDoItemData.filter(item => item.isChecked).length}
+                {todos.filter(item => item.isChecked).length}
               </div>
               <div className="text-xs sm:text-sm text-gray-600 font-medium">
                 Completed
@@ -120,7 +157,7 @@ const TodoList = () => {
             
             <div className="bg-grey-accent rounded-lg sm:rounded-xl p-4 sm:p-6 text-center shadow-md">
               <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-1 sm:mb-2">
-                {toDoItemData.filter(item => !item.isChecked).length}
+                {todos.filter(item => !item.isChecked).length}
               </div>
               <div className="text-xs sm:text-sm text-gray-600 font-medium">
                 Pending
@@ -129,7 +166,7 @@ const TodoList = () => {
             
             <div className="bg-grey-accent rounded-lg sm:rounded-xl p-4 sm:p-6 text-center shadow-md">
               <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1 sm:mb-2">
-                {toDoItemData.length > 0 ? Math.round((toDoItemData.filter(item => item.isChecked).length / toDoItemData.length) * 100) : 0}%
+                {todos.length > 0 ? Math.round((todos.filter(item => item.isChecked).length / todos.length) * 100) : 0}%
               </div>
               <div className="text-xs sm:text-sm text-gray-600 font-medium">
                 Progress
@@ -141,56 +178,5 @@ const TodoList = () => {
     </div>
   );
 };
-
-const toDoItemData = [
-  {
-    id: "1",
-    isChecked: false,
-    label: "Mengerjakan Desain UI/UX Aplikasi Mobile",
-    date: new Date(2025, 0, 15),
-  },
-  {
-    id: "2",
-    isChecked: true,
-    label: "Revisi Laporan Keuangan Tahunan",
-    date: new Date(2025, 1, 28),
-  },
-  {
-    id: "3",
-    isChecked: false,
-    label: "Menyiapkan Presentasi untuk Rapat Mingguan",
-    date: new Date(2025, 2, 10),
-  },
-  {
-    id: "4",
-    isChecked: false,
-    label: "Mengembangkan Fitur Login di Website",
-    date: new Date(2025, 3, 5),
-  },
-  {
-    id: "5",
-    isChecked: true,
-    label: "Melakukan Review Kode untuk Modul Pembayaran",
-    date: new Date(2024, 11, 20),
-  },
-  {
-    id: "6",
-    isChecked: false,
-    label: "Mempelajari Bahasa Pemrograman Python Dasar",
-    date: new Date(2025, 4, 12),
-  },
-  {
-    id: "7",
-    isChecked: false,
-    label: "Menulis Artikel Blog tentang Teknologi Terbaru",
-    date: new Date(2025, 5, 30),
-  },
-  {
-    id: "8",
-    isChecked: true,
-    label: "Membeli Perlengkapan Kantor Baru",
-    date: new Date(2024, 9, 1),
-  },
-];
 
 export default TodoList;

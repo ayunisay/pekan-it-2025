@@ -24,34 +24,43 @@ function App() {
 
   return (
     <>
-      {/* {error}  //soon (Blm dipikirin)*/}
-      {loading ? <Skeleton /> : ""}
-      <div
-        className={`${
-          pathCheck
-            ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_20%,_#5a7ba8_40%,_theme(colors.tertiary)_60%,_theme(colors.tertiary)_100%)]"
-            : "bg-tertiary"
-        } min-h-screen flex flex-col`}
-      >
-        <Navbar user={user} />
-        <Routes>
-          <Route index element={<Dashboard />} />
+      <div className="min-h-screen flex flex-col">
+        {/* {error}  //soon (Blm dipikirin)*/}
+        {loading ? (
+          <div className="flex-grow flex items-center justify-center">
+            <Skeleton className="w-[20rem] h-[4rem]" />
+          </div>
+        ) : (
+          <div
+            className={`${
+              pathCheck
+                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_20%,_#5a7ba8_40%,_theme(colors.tertiary)_60%,_theme(colors.tertiary)_100%)]"
+                : "bg-tertiary"
+            } min-h-screen flex flex-col`}
+          >
+            <Navbar user={user} />
+            <main className="flex-grow">
+              <Routes>
+                <Route index element={<Dashboard />} />
 
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/profile/:username" element={<Profile />} />
 
-          <Route path="/todo" element={<TodoList />} />
-          <Route path="/todo/detail" element={<TodoDetail />} />
-          <Route path="/todo/post" element={<AddTodo />} />
-          <Route path="/pomodoro" element={<PomodoroTimer />} />
+                <Route path="/todo" element={<TodoList user={user} />} />
+                <Route path="/todo/detail" element={<TodoDetail />} />
+                <Route path="/todo/post" element={<AddTodo user={user} />} />
+                <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-          <Route path="/find" element={<FindFriend />} />
-          <Route path="/grade" element={<Grade />} />
-          <Route path="/chat" element={<ChatPage />} />
-        </Routes>
-        <Footer />
+                <Route path="/find" element={<FindFriend />} />
+                <Route path="/grade" element={<Grade />} />
+                <Route path="/chat" element={<ChatPage />} />
+              </Routes>
+            </main>
+              <Footer />
+            </div>
+        )}
       </div>
     </>
   );

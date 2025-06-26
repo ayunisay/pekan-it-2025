@@ -16,16 +16,14 @@ const Navbar = ({ user }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTaskOpen, setIsTaskOpen] = useState(false);
 
-const isActive = (path: string) => {
-  if (path === "/") {
-    return location.pathname === "/"; 
-  }
-  return location.pathname.startsWith(path);
-};
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
-  const isTugasFokusActive = 
-    isActive("/todo") || 
-    isActive("/pomodoro");
+  const isTugasFokusActive = isActive("/todo") || isActive("/pomodoro");
 
   const linkClass = (path: string) => {
     return isActive(path)
@@ -83,7 +81,7 @@ const isActive = (path: string) => {
               <li>
                 <Link
                   to="/find"
-                  className={linkClass("/find")} 
+                  className={linkClass("/find")}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Find Friends
@@ -111,10 +109,10 @@ const isActive = (path: string) => {
                 <button
                   onClick={() => setIsTaskOpen(!isTaskOpen)}
                   className={`${
-                    isTugasFokusActive 
+                    isTugasFokusActive
                       ? linkClass("/todo")
                       : linkClass("/yanglaen")
-                  } flex items-center focus:outline-none`} 
+                  } flex items-center focus:outline-none`}
                 >
                   Tugas & Fokus
                   <img
@@ -127,12 +125,24 @@ const isActive = (path: string) => {
                 {isTaskOpen && (
                   <ul className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-40 bg-white rounded-2xl shadow-lg z-10">
                     <li className="px-4 py-2 hover:bg-primary cursor-pointer rounded-2xl">
-                      <Link to="/todo" onClick={() => { setIsMenuOpen(false); setIsTaskOpen(false); }}>
+                      <Link
+                        to="/todo"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTaskOpen(false);
+                        }}
+                      >
                         To-do List
                       </Link>
                     </li>
                     <li className="px-4 py-2 hover:bg-primary cursor-pointer rounded-2xl">
-                      <Link to="/pomodoro" onClick={() => { setIsMenuOpen(false); setIsTaskOpen(false); }}>
+                      <Link
+                        to="/pomodoro"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setIsTaskOpen(false);
+                        }}
+                      >
                         Pomodoro
                       </Link>
                     </li>
@@ -142,7 +152,7 @@ const isActive = (path: string) => {
             </ul>
             <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
               <Link
-                to={!user ? "/login": "/profile"}
+                to={!user ? "/login" : `/profile/${user.username}`}
                 className={`${linkClass("/register")} group flex flex-col items-center gap-1`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -151,9 +161,7 @@ const isActive = (path: string) => {
                   alt="Profile"
                   className="w-6 group-hover:opacity-70 transition-opacity duration-200"
                 />
-                <p className="text-xs">
-                  {user ? user.name : 'Login' }
-                </p>
+                <p className="text-xs">{user ? user.name : "Login"}</p>
               </Link>
             </div>
           </div>
@@ -164,3 +172,4 @@ const isActive = (path: string) => {
 };
 
 export default Navbar;
+
