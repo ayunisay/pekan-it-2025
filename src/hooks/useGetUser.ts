@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { verifyToken } from "../providers/userProvider";
 import type { ApiError } from "../types/apiType";
 import { useLocation } from "react-router";
-import type { UserType as User } from "../types/user";
+import type { UpdateUserType, UserType as User } from "../types/user";
 
 type UseGetUserReturn = {
   user: User | null;
@@ -18,9 +18,8 @@ let lastFetchTime: number | null = null;
 let isCurrentlyFetching: boolean = false;
 
 const CACHE_TIME: number = 10 * 60 * 1000; // 10 menit
-//Bakal fetch setiap 10 menit sekali
 
-const useGetUser = (): UseGetUserReturn => {
+const useGetUser = (): UseGetUserReturn  => {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(userCache);
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +32,7 @@ const useGetUser = (): UseGetUserReturn => {
       userCache = null;
       lastFetchTime = null;
       setUser(null);
+      setLoading(false);
       return;
     }
 
@@ -45,29 +45,39 @@ const useGetUser = (): UseGetUserReturn => {
     
     if (cacheIsValid) {
       setUser(userCache);
+      setLoading(false);
       return;
     }
 
-    if (isCurrentlyFetching) {
-      return;
-    }
+    if (isCurrentlyFetching) return;
 
     try {
       isCurrentlyFetching = true;
       setLoading(true);
       setError(null);
 
-      const userData: User = await verifyToken({token});
+      const userData: UpdateUserType = await verifyToken(token);
       
-      userCache = userData;
+      const transformedUser: User = {
+        id: userData.id || 0,
+        username: userData.username,
+        email: userData.email,
+        name: userData.name,
+        avatar: userData.avatar || '',
+        role: userData.role,
+        createdAt: userData.createdAt || '',
+        updatedAt: userData.updatedAt || ''
+      };
+
+      userCache = transformedUser;
       lastFetchTime = now;
-      setUser(userData);
+      setUser(transformedUser);
 
     } catch (e: unknown) {
       const apiError = e as ApiError;
       setError(apiError.message || 'Ada yang error');
       setUser(null);
-      
+
       if (apiError.status === 401 || apiError.status === 403) {
         logout(true);
       }
@@ -85,18 +95,19 @@ const useGetUser = (): UseGetUserReturn => {
 
   const logout = (redirectToLogin: boolean = true): void => {
     Cookies.remove('token');
-    
+
     userCache = null;
     lastFetchTime = null;
     setUser(null);
     setError(null);
-    
+
     if (redirectToLogin && typeof window !== 'undefined') {
       location.pathname = '/login';
     }
   };
 
   useEffect(() => {
+    console.log('Running fetchUser...');
     fetchUser();
   }, []);
 
@@ -105,7 +116,7 @@ const useGetUser = (): UseGetUserReturn => {
     loading, 
     error, 
     refetch, 
-    logout 
+    logout,
   };
 };
 
