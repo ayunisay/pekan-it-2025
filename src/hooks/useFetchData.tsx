@@ -143,8 +143,8 @@ export const usePostData = <T,> (url: string, configs?: AxiosRequestConfig, axio
   const postData = async (data: FormData | object, resourcId?: string | number):Promise <T> => {
     setLoading(true);
     try {
-      const response = await axios.post<T>(
-        `${endpointApi}/${resourcId || ""}`,
+      const endpoint = resourcId ? `${endpointApi}/${resourcId}` : endpointApi;
+      const response = await axios.post<T>(endpoint,
         data,
         axiosConfig
       );

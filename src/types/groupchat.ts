@@ -6,9 +6,17 @@ export interface GroupchatType {
     name: string;
     image: string | null;
     messages?: GroupchatMessageType[]
+    members?: GroupchatMemberType[]
     createdAt: Date;
     updatedAt: Date
 };
+
+export interface GroupchatMemberType {
+    userId: number;
+    groupId: number;
+    user: UserType;
+    group: GroupchatType;
+}
 
 export interface PostGroupchatType {
     authorId: number;
@@ -27,7 +35,7 @@ export interface JoinedUserGroupChatType {
     id: number;
     groupId: number;
     userId: number;
-    group: GroupchatType
+    group: GroupchatType;
 }
 
 

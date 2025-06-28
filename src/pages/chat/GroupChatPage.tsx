@@ -13,7 +13,7 @@ import type {
   ResponseApiErrorType,
   ResponseApiType,
 } from "../../types/apiType";
-import { Undo2, UsersRound } from "lucide-react";
+import { Undo2, UserRoundPlus, UsersRound, X } from "lucide-react";
 import socket from "../../socket/socket";
 import { cn } from "../../utils/cn";
 import MessageBubble from "../../components/chats/MessageBubble";
@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import useToast from "@/hooks/useHotToast";
 import { createFormData } from "@/helpers/formDataHelper";
+import { formatCreationDate } from "@/utils/string";
+import AddGroupMemberDialog from "./AddGroupMemberDialog";
 
 const GroupChatPage = () => {
   const [selectedGroupChat, setSelectedGroupChat] =
@@ -47,6 +49,7 @@ const GroupChatPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [messages, setMessages] = useState<GroupchatMessageType[] | null>(null);
   const [newMessage, setNewMessage] = useState<string>("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [loadings, setLoadings] = useState<{
     loadingLoadMessage: boolean;
     loadingSendMessage: boolean;
@@ -55,10 +58,11 @@ const GroupChatPage = () => {
     loadingSendMessage: false,
   });
   const [isShowAlert, setIsShowAlert] = useState<boolean>(false);
+  const [isGroupInfoOpen, setIsGroupInfoOpen] = useState<boolean>(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputMessageRef = useRef<HTMLInputElement>(null);
   const { user, loading: loadingGetUser } = useGetUser();
-
 
   // ## Hooks ##
   const [
@@ -68,12 +72,14 @@ const GroupChatPage = () => {
     url: `${GROUP_CHAT_EP}/user/${user?.id}`,
     initialCall: false,
   });
-  const { putData: updateGroup } =
-    usePutData<ResponseApiType<GroupchatType>>(GROUP_CHAT_EP, {
+  const { putData: updateGroup } = usePutData<ResponseApiType<GroupchatType>>(
+    GROUP_CHAT_EP,
+    {
       headers: {
-        "Content-Type": "multipart/form-data"
-      }
-    });
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   const { deleteData: deleteGroup } = useDeleteData<
     ResponseApiType<GroupchatType>
   >(`${GROUP_CHAT_EP}`);
@@ -95,7 +101,10 @@ const GroupChatPage = () => {
     };
     const handleSendChatMessageError = (error: ResponseApiErrorType) => {
       console.error(error);
-      alert(error.message);
+      pushToast({
+        message: "Gagal mengirim pesan",
+        isError: true
+      })
     };
 
     socket.on("receive new group chat message", handleReceiveMessage);
@@ -115,36 +124,39 @@ const GroupChatPage = () => {
         setLoadings((prev) => ({ ...prev, loadingLoadMessage: true }));
 
         // Ambil semua message dari group chat
-        const handlePrivateChatMessage = (
+        const handleGroupChatMessage = (
           receivedMessages: ResponseApiType<GroupchatMessageType[]>
         ) => {
           setMessages(receivedMessages?.data || null);
           setLoadings((prev) => ({ ...prev, loadingLoadMessage: false }));
         };
         // Error nya
-        const handleGetPrivateChatMessage = (error: ResponseApiErrorType) => {
+        const handleGetGroupChatMessage = (error: ResponseApiErrorType) => {
           console.error(error);
-          alert(error.message);
+          pushToast({
+            message: "Gagal mendapatkan pesan grup",
+            isError: true
+          })
         };
 
         socket.emit("group chat", activeGroup.toString());
-        socket.on("get detail group chat message", handlePrivateChatMessage);
+        socket.on("get detail group chat message", handleGroupChatMessage);
         socket.on(
           "get detail group chat message error",
-          handleGetPrivateChatMessage
+          handleGetGroupChatMessage
         );
 
         return () => {
-          socket.off("get detail group chat message", handlePrivateChatMessage);
+          socket.off("get detail group chat message", handleGroupChatMessage);
           socket.off(
             "get detail group chat message error",
-            handleGetPrivateChatMessage
+            handleGetGroupChatMessage
           );
         };
       }
     } else {
-      if(user){
-        reFetchGroupChats()
+      if (user) {
+        reFetchGroupChats();
       }
       setMessages(null);
       setLoadings((prev) => ({ ...prev, loadingLoadMessage: false }));
@@ -152,11 +164,10 @@ const GroupChatPage = () => {
   }, [activeGroup]);
 
   useEffect(() => {
-    if(user) {
+    if (user) {
       updateInitialUrl(`${GROUP_CHAT_EP}/user/${user.id}`, true, {});
     }
-  }, [user])
-
+  }, [user]);
   useEffect(() => {
     if (messagesEndRef.current) {
       setTimeout(() => {
@@ -171,6 +182,7 @@ const GroupChatPage = () => {
 
     const handleEscPress = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        setIsGroupInfoOpen(() => false);
         setActiveGroup(0);
         setSelectedGroupChat(null);
       }
@@ -189,7 +201,7 @@ const GroupChatPage = () => {
 
     setLoadings((prev) => ({ ...prev, loadingSendMessage: true }));
 
-    if(user) {
+    if (user) {
       const message: PostGroupchatMessageType = {
         groupId: activeGroup,
         authorId: user?.id,
@@ -207,6 +219,7 @@ const GroupChatPage = () => {
   };
 
   const handleBackToListChat = () => {
+    setIsGroupInfoOpen(() => false);
     setActiveGroup(0);
     setSelectedGroupChat(null);
   };
@@ -325,7 +338,9 @@ const GroupChatPage = () => {
                       key={idx}
                       group={group.group}
                       isActive={activeGroup === group.group.id}
-                      onClick={() => handleSelectedGroup(group.group.id, group.group)}
+                      onClick={() =>
+                        handleSelectedGroup(group.group.id, group.group)
+                      }
                       handleDelete={handleDeleteGroup}
                     />
                   );
@@ -336,7 +351,7 @@ const GroupChatPage = () => {
 
           {/* Room Chat */}
           {selectedGroupChat ? (
-            <section className="w-full flex flex-col rounded-2xl overflow-hidden relative">
+            <section className="w-full flex rounded-2xl overflow-hidden relative">
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-50"
                 style={{
@@ -345,9 +360,14 @@ const GroupChatPage = () => {
                 }}
               />
 
-              {/* Chat Header */}
-              <div className="relative z-10 flex flex-col h-full">
-                <header className="flex items-center p-4 border-b border-gray-700 bg-[#16243B]/80 backdrop-blur-sm rounded-tr-2xl gap-4">
+              <div className="relative z-10 flex flex-col h-full w-full">
+                {/* Chat Header */}
+                <header
+                  className={cn(
+                    "flex items-center px-4 border-b border-gray-700 bg-[#16243B]/80 backdrop-blur-sm gap-4 cursor-pointer",
+                    !isGroupInfoOpen && "rounded-tr-2xl"
+                  )}
+                >
                   <button
                     className="text-slate-100 p-2 cursor-pointer rounded-full hover:bg-[#16243B]/40 transition-all ease-in-out duration-300"
                     type="button"
@@ -355,18 +375,20 @@ const GroupChatPage = () => {
                   >
                     <Undo2 className="w-7 h-7" />
                   </button>
-                  {selectedGroupChat.image ? (
-                    <img
-                      src={selectedGroupChat.image}
-                      alt={"Avatar pic"}
-                      className="w-10 h-10 rounded-full mr-4"
-                    />
-                  ) : (
-                    <UsersRound className="w-10 h-10 rounded-full bg-gray-400 p-1" />
-                  )}
-                  <h2 className="text-lg font-semibold text-white">
-                    {selectedGroupChat.name}
-                  </h2>
+                  <div className="w-full flex p-4 items-center" onClick={() => setIsGroupInfoOpen(!isGroupInfoOpen)}>
+                    {selectedGroupChat.image ? (
+                      <img
+                        src={selectedGroupChat.image}
+                        alt={"Avatar pic"}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                    ) : (
+                      <UsersRound className="w-10 h-10 rounded-full bg-gray-400 p-1" />
+                    )}
+                    <h2 className="text-lg font-semibold text-white">
+                      {selectedGroupChat.name}
+                    </h2>
+                  </div>
                 </header>
 
                 {/* Chat box */}
@@ -383,9 +405,13 @@ const GroupChatPage = () => {
                     />
                   ))}
                 </div>
-
                 {/* Input */}
-                <div className="p-4 bg-[#16243B]/80 backdrop-blur-sm rounded-br-2xl">
+                <div
+                  className={cn(
+                    "p-4 bg-[#16243B]/80 backdrop-blur-sm",
+                    !isGroupInfoOpen && "rounded-br-2xl"
+                  )}
+                >
                   <form
                     onSubmit={handleSendMessage}
                     className="flex items-center space-x-3"
@@ -418,6 +444,54 @@ const GroupChatPage = () => {
                   </form>
                 </div>
               </div>
+              <div
+                className={`z-10 ${
+                  isGroupInfoOpen ? "w-2/3" : "w-0"
+                } transition-discrete duration-200 border-l-gray-500 border-l-2 bg-[#16243B]/80 backdrop-blur-sm overflow-hidden`}
+              >
+                <section className="flex gap-2 items-center p-4 border-b border-gray-700 bg-[#16243B]/80 backdrop-blur-sm text-slate-50">
+                  <button
+                    className=" p-2 cursor-pointer rounded-full hover:bg-[#16243B]/40 transition-all ease-in-out duration-300"
+                    type="button"
+                    onClick={() => setIsGroupInfoOpen(false)}
+                  >
+                    <X className="w-7 h-7" />
+                  </button>
+                  <h3 className="text-base">Informasi Grup</h3>
+                </section>
+
+                <section className="flex flex-col gap-4 justify-center items-center p-4 text-slate-50">
+                  {selectedGroupChat.image ? (
+                    <img
+                      src={selectedGroupChat.image}
+                      alt={"Avatar pic"}
+                      className="w-25 h-25 rounded-full mr-4"
+                    />
+                  ) : (
+                    <UsersRound className="w-25 h-25 rounded-full bg-gray-400 p-1" />
+                  )}
+                  <h2 className="text-lg font-semibold text-white">
+                    {selectedGroupChat.name}
+                  </h2>
+                  <div>
+                    <p>
+                      Dibuat pada{" "}
+                      {formatCreationDate(
+                        selectedGroupChat.createdAt as unknown as string
+                      )}
+                    </p>
+                  </div>
+                </section>
+                <section className="text-slate-50 bg-[#16243B]/80 backdrop-blur-sm h-full">
+                  <div className="flex gap-2 items-center cursor-pointer p-4 hover:bg-[#333d50]" onClick={() => setIsAddMemberDialogOpen(true)}>
+                    <div className="bg-secondary p-2 rounded-full flex items-center justify-center text-gray-900">
+                      <UserRoundPlus />
+
+                    </div>
+                    <p className="">Tambahkan teman</p>
+                  </div>
+                </section>
+              </div>
             </section>
           ) : (
             <section className="w-2/3 flex flex-col rounded-r-2xl overflow-hidden relative bg-black items-center justify-center">
@@ -437,6 +511,8 @@ const GroupChatPage = () => {
           )}
         </div>
       </div>
+
+      <AddGroupMemberDialog userId={user.id} selectedGroup={selectedGroupChat} handleOpen={() => setIsAddMemberDialogOpen(false)} isOpen={isAddMemberDialogOpen} />
 
       <AlertDialog
         open={isShowAlert}
