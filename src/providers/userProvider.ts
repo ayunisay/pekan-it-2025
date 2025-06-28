@@ -1,7 +1,8 @@
-import type { UpdateUserType, UserType } from "../types/user.ts";
+import type { FriendReqType, UpdateUserType, UserType } from "../types/user.ts";
 import axiosInstance from "./axiosInstance.ts";
 
 const USER = "users";
+const FRIEND = "friends";
 
 export const register = async (data: any) => {
   try {
@@ -125,6 +126,64 @@ export const getUserByUsn = async (username: string) => {
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get username API");
+    throw e;
+  }
+};
+
+export const getFriends = async (id: number, status: string) => {
+  try {
+    const res = await axiosInstance.get(`${USER}/${FRIEND}/${id}`, {
+      params: {status}
+    });
+    return res.data.data;
+  } catch (e) {
+    console.error(e, "Error in get username API");
+    throw e;
+  }
+};
+
+export const getFriend= async (identifier: any) => { //bisa pake username atau id
+  const isNumber = !isNaN(identifier);  
+  try {
+    const res = await axiosInstance.get(`${USER}/${FRIEND}/${identifier}?byUsername=${isNumber}`);
+    console.log("Data : ", res);
+    return res.data.data;
+  } catch (e) {
+    console.error(e, "Error in get friend API");
+    throw e;
+  }
+};
+
+export const requestFriend = async (data:any) => {
+  try {
+    const res = await axiosInstance.post(`${USER}/${FRIEND}`, data);
+    console.log("Data : ", res);
+    return res.data.data;
+  } catch (e) {
+    console.error(e, "Error in request friend API");
+    throw e;
+  }
+};
+
+export const updateFriendStatus = async (data: FriendReqType) => {
+  try {
+    const res = await axiosInstance.post(`${USER}/${FRIEND}/status`, data);
+    console.log("Data : ", res);
+    return res.data.data;
+  } catch (e: any) {
+    console.error(e, "Error in update friend API");
+    console.error(`Message error ${e.Message}`);
+    throw e;
+  }
+};
+
+export const deleteFriend = async (identifier: any) => {
+  try {
+    const res = await axiosInstance.delete(`${USER}/${FRIEND}/${identifier}`);
+    console.log("Data : ", res);
+    return res.data.data;
+  } catch (e) {
+    console.error(e, "Error in delete API");
     throw e;
   }
 };

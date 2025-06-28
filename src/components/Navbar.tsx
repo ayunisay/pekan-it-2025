@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import profileIcon1 from "../assets/icons/profileIcon1.png";
 import profileIcon2 from "../assets/icons/profileIcon2.png";
 import tugasIcon1 from "../assets/icons/tugasIcon1.png";
@@ -15,6 +15,23 @@ const Navbar = ({ user }: NavbarProps) => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTaskOpen, setIsTaskOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  const handleScroll = () => {
+    const offset = window.scrollY;
+    if (offset > 10) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -37,7 +54,11 @@ const Navbar = ({ user }: NavbarProps) => {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full p-4 z-50 bg-transparent bg-opacity-50">
+      <nav
+        className={`fixed top-0 left-0 w-full p-4 z-50 transition-all ${
+          scrolled ? "bg-[#2d4a73] shadow-lg" : "bg-transparent"
+        }`}
+      >
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white text-lg font-bold z-50">
             <Link to="/" className="hover:text-gray-300">
@@ -67,7 +88,11 @@ const Navbar = ({ user }: NavbarProps) => {
             } md:relative md:bg-transparent md:h-auto md:py-0`}
           >
             <ul
-              className={`flex ${isMenuOpen ? "flex-col items-center space-y-8 text-xl" : "flex-row space-x-6"} md:flex-row md:space-x-6 md:space-y-0`}
+              className={`flex ${
+                isMenuOpen
+                  ? "flex-col items-center space-y-8 text-xl"
+                  : "flex-row space-x-6"
+              } md:flex-row md:space-x-6 md:space-y-0`}
             >
               <li>
                 <Link
@@ -80,8 +105,8 @@ const Navbar = ({ user }: NavbarProps) => {
               </li>
               <li>
                 <Link
-                  to="/find"
-                  className={linkClass("/find")}
+                  to="/friend"
+                  className={linkClass("/friend")}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Find Friends
@@ -153,7 +178,9 @@ const Navbar = ({ user }: NavbarProps) => {
             <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
               <Link
                 to={!user ? "/login" : `/profile/${user.username}`}
-                className={`${linkClass("/register")} group flex flex-col items-center gap-1`}
+                className={`${linkClass(
+                  "/register"
+                )} group flex flex-col items-center gap-1`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <img
@@ -172,4 +199,3 @@ const Navbar = ({ user }: NavbarProps) => {
 };
 
 export default Navbar;
-
