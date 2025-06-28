@@ -2,19 +2,55 @@ import React, { useEffect, useRef, useState } from "react";
 import profilePic from "../../assets/images/profile.png";
 import ProgressBar from "../../components/ProgressBar";
 import { MyButton } from "../../components/Button";
-import type { TaskInterface } from "../../interface/Interface";
 import Calendar from "./Calendar";
+import UpdateProfile from "./UpdateProfile";
+import type { TaskType } from "../../types/task";
+import type { UserType as User, UserType } from "../../types/user";
+import { useNavigate, useParams } from "react-router";
+import { Skeleton } from "../../components/ui/skeleton";
+import useGetUser from "../../hooks/useGetUser";
+import { getUserByUsn } from "../../providers/userProvider";
 
 const ProfilePage = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const navigate = useNavigate();
+  const { logout } = useGetUser();
+  const { username } = useParams();
+  const [user, setUser] = useState<User>();
+  const [loading, setLoading] = useState(false);
 
-    const handleButtonClick = () => {
+  useEffect(() => {
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const data = await getUserByUsn(username ?? "");
+        setUser(data);
+        setLoading(false);
+      } catch (e: any) {
+        console.log(e);
+      }
+    };
+    fetchUser();
+  }, [username]);
+
+  const handleButtonClick = () => {
+    logout();
     setIsOpen(true); // Open the popup
   };
 
-  const handlePopupClose = () => {
-    setIsOpen(false); // Close the popup
+  const handleCloseUpdate = () => {
+    setIsUpdateOpen(false);
   };
+
+  const handleOpenUpdate = () => {
+    setIsUpdateOpen(true);
+  };
+
+  if (loading == true) return <Skeleton />;
+  if (user == null) {
+    return <div className="text-white text-center mt-10">Redirecting...</div>;
+  }
 
   return (
     <>
@@ -22,37 +58,42 @@ const ProfilePage = () => {
         <div className="flex flex-col items-center w-full xl:w-1/4 xl:max-w-xs gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           <div className="relative group">
             <img
-              src={profilePic}
+              src={user.avatar ?? profilePic}
               alt="Profile"
               className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 rounded-full object-cover shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-xl"
             />
             <div className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1">
-              <MyButton 
-                text="Edit Profile" 
-                variant="accent" 
+              <MyButton
+                text="Edit Profile"
+                variant="accent"
                 className="text-[10px] sm:text-xs md:text-sm px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2 shadow-lg"
+                onClick={handleOpenUpdate}
               />
             </div>
           </div>
 
           <div className="text-center w-full">
             <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-semibold mb-1 sm:mb-2 transition-all duration-200">
-              Baskara
+              {user.name}
             </h2>
             <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-5 lg:mb-6">
-              #acno0189
+              {user.id}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 lg:gap-6">
               <div className="flex flex-col text-center">
-                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold">5</p>
-                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300">Teman</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold">
+                  5
+                </p>
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300">
+                  Teman
+                </p>
               </div>
 
               <div className="w-full sm:w-auto">
-                <MyButton 
-                  text="Add Friend" 
-                  variant="accent" 
+                <MyButton
+                  text="Add Friend"
+                  variant="accent"
                   onClick={handleButtonClick}
                   className="w-full sm:w-auto px-4 sm:px-6 md:px-8 lg:px-10 py-2 sm:py-2.5 md:py-3 lg:py-3.5 text-sm sm:text-base md:text-lg"
                 />
@@ -116,6 +157,9 @@ const ProfilePage = () => {
 
         <Calendar tasks={fakeTasks} />
       </div>
+      {isUpdateOpen && (
+        <UpdateProfile onClose={handleCloseUpdate} user={user} />
+      )}
     </>
   );
 };
@@ -164,7 +208,7 @@ const Button: React.FC = () => {
 
 export default ProfilePage;
 
-const fakeTasks: TaskInterface[] = [
+const fakeTasks: TaskType[] = [
   {
     id: 1,
     text: "Finish UI for login page",
@@ -204,7 +248,7 @@ const fakeTasks: TaskInterface[] = [
     color: "bg-yellow-400",
   },
   {
-    id: 9,  
+    id: 9,
     text: "Update documentation",
     date: "2025-06-20",
     color: "bg-red-400",
