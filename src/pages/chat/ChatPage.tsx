@@ -329,16 +329,23 @@ const ChatPage = () => {
             ) : (
               <section className="w-2/3 flex flex-col rounded-r-2xl overflow-hidden relative bg-black items-center justify-center">
                 <div
-                  className="absolute inset-0 bg-cover bg-center opacity-50 z-0"
+                  className="absolute inset-0 bg-cover bg-center opacity-25 z-0"
                   style={{
                     backgroundImage: `url(${chatBg})`,
                     backgroundColor: "#fff",
                   }}
                 />
-                <div className="z-10">
-                  <h1 className="text-2xl text-slate-50">
-                    Tolong buatin UI buat nyuruh user start chatting or whatever
+                <div className="flex flex-col gap-4 items-center z-10">
+                  <h1 className="text-white text-2xl">
+                    Start chatting by finding your friend!
                   </h1>
+                  <a href="/friend">
+                    <MyButton
+                      text={"Find"}
+                      variant="secondary"
+                      className="cursor-pointer hover:"
+                    />
+                  </a>
                 </div>
               </section>
             )}
