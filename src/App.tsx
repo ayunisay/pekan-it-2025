@@ -15,12 +15,39 @@ import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
+import { useEffect, useState } from "react";
 
 function App() {
   const location = useLocation();
   const pathCheck =
-    location.pathname === "/profile" || location.pathname === "/friend";
+    location.pathname.startsWith("/profile") || location.pathname === "/friend";
   const { user, loading, error } = useGetUser();
+
+    
+  const [isAppReady, setIsAppReady] = useState(false);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      if (!loading) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setIsAppReady(true);
+      }
+    };
+
+    initializeApp();
+  }, [loading]);
+
+  if (!isAppReady) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-tertiary">
+        <div className="text-center space-y-4">
+          <div className="mt-6">
+            <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-white mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -53,7 +80,7 @@ function App() {
                 <Route path="/todo/post" element={<AddTodo user={user} />} />
                 <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-                <Route path="/find" element={<FindFriend />} />
+                <Route path="/friend" element={<FindFriend />} />
                 <Route path="/grade" element={<Grade />} />
                 <Route path="/chat" element={<ChatPage />} />
               </Routes>
