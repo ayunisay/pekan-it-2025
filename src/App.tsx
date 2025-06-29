@@ -29,7 +29,7 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       if (!loading) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         setIsAppReady(true);
       }
     };
