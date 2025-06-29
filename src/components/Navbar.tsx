@@ -6,6 +6,7 @@ import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation } from "react-router";
 import { Menu, X } from "lucide-react";
 import type { UserType as User } from "../types/user";
+import useGetUser from "../hooks/useGetUser";
 
 interface NavbarProps {
   user: User | null; //Nullable
@@ -13,8 +14,10 @@ interface NavbarProps {
 
 const Navbar = ({ user }: NavbarProps) => {
   const location = useLocation();
+  const { logout } = useGetUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isTaskOpen, setIsTaskOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const handleScroll = () => {
@@ -24,6 +27,12 @@ const Navbar = ({ user }: NavbarProps) => {
     } else {
       setScrolled(false);
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsProfileOpen(false);
+    setIsMenuOpen(false);
   };
 
   useEffect(() => {
@@ -41,6 +50,7 @@ const Navbar = ({ user }: NavbarProps) => {
   };
 
   const isTugasFokusActive = isActive("/todo") || isActive("/pomodoro");
+  const isProfileActive = isActive("/profile");
 
   const linkClass = (path: string) => {
     return isActive(path)
@@ -175,21 +185,66 @@ const Navbar = ({ user }: NavbarProps) => {
                 )}
               </li>
             </ul>
-            <div className={`${isMenuOpen ? "mt-8" : "md:ml-10 mt-0"}`}>
-              <Link
-                to={!user ? "/login" : `/profile/${user.username}`}
-                className={`${linkClass(
-                  "/register"
-                )} group flex flex-col items-center gap-1`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <img
-                  src={isActive("/register") ? profileIcon2 : profileIcon1}
-                  alt="Profile"
-                  className="w-6 group-hover:opacity-70 transition-opacity duration-200"
-                />
-                <p className="text-xs">{user ? user.name : "Login"}</p>
-              </Link>
+
+            <div className={`relative ${isMenuOpen ? "mt-8" : "md:ml-10"}`}>
+              {user ? (
+                // logged in
+                <div>
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className={`${
+                      isProfileActive ? "text-yellow-400" : "text-white"
+                    } group flex flex-col items-center gap-1 focus:outline-none`}
+                  >
+                    <img
+                      src={isProfileActive ? profileIcon2 : profileIcon1}
+                      alt="Profile"
+                      className="w-6 group-hover:opacity-70"
+                    />
+                    <p className="text-xs">{user.name}</p>
+                  </button>
+                  {isProfileOpen && (
+                    <ul className="absolute right-0 top-full mt-2 w-40 bg-white rounded-2xl shadow-lg z-10 text-gray-800">
+                      <li>
+                        <Link
+                          to={`/profile/${user.username}`}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-t-2xl"
+                          onClick={() => {
+                            setIsProfileOpen(false);
+                            setIsMenuOpen(false);
+                          }}
+                        >
+                          Profile
+                        </Link>
+                      </li>
+                      <li>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-b-2xl"
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                // not logged in
+                <Link
+                  to="/login"
+                  className={`${
+                    isActive("/login") ? "text-yellow-400" : "text-white"
+                  } group flex flex-col items-center gap-1`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <img
+                    src={isActive("/login") ? profileIcon2 : profileIcon1}
+                    alt="Login"
+                    className="w-6 group-hover:opacity-70"
+                  />
+                  <p className="text-xs">Login</p>
+                </Link>
+              )}
             </div>
           </div>
         </div>
