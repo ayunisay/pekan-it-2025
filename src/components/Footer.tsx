@@ -6,9 +6,7 @@ type FooterProps = {
 
 const Footer: React.FC<FooterProps> = ({ className = "", ...rest }) => {
   return (
-    <footer
-      className={`bg-gradient-to-b from-tertiary via-[#5a7ba8] to-primary py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 ${className}`}
-    >
+    <footer className={`bg-transparent py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 ${className}`}>
       <div className="max-w-6xl mx-auto border-t border-slate-400 pt-6 sm:pt-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 sm:mb-12">
           <div className="col-span-1 text-center sm:text-left">

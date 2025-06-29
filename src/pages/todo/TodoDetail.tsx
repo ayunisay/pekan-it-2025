@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import TodoTile from '../../components/todo/TodoTile';
 
+//final kalo ada subtask
+
 const TodoDetail = () => {
   const [todoChecked, setTodoChecked] = useState(false);
-
+  const toDateKey = (date: Date) => date.toISOString().split("T")[0]; 
 
   return (
         <div className="flex bg-center justify-center items-center min-h-screen mt-10">
@@ -16,8 +18,9 @@ const TodoDetail = () => {
                 key={p.id}
                 isChecked={p.isChecked}
                 label={p.label}
-                date={p.date}
-                id={p.id}
+                date={toDateKey(new Date(p.date))}
+                id={Number(p.id)}
+                color={p.}
                 onChange={setTodoChecked}
               />
             ))}

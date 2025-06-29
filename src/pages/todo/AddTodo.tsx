@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
-import { Color, Status } from "../../types/todo";
+import { Color, TodoStatus, type PostTodoType } from "../../types/todo";
 import type { UserType } from "../../types/user";
 import { MyButton } from "../../components/Button";
 import { addTodo } from "../../providers/TodoProvider";
@@ -34,11 +34,9 @@ const AddTodo: React.FC<AddTodoProps> = ({ user }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const [inputs, setInputs] = useState({
-    userId: user?.id || 0,
     title: "",
-    status: Status.progress,
+    status: TodoStatus.uncompleted,
     description: "",
-    priority: 1,
     icon: "wow", //belum dipikirin
     deadline: "",
     color: ColorsName[0],
@@ -52,7 +50,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ user }) => {
       ...p,
       color: ColorsName[selectedColorIndex],
       deadline: deadline,
-      userId: user?.id ?? p.userId,
+      userId: user?.id,
     }));
   }, [selectedColorIndex, deadline, user?.id]);
 
@@ -83,12 +81,14 @@ const AddTodo: React.FC<AddTodoProps> = ({ user }) => {
       return;
     }
 
-    const todoData = {
+    const todoData: PostTodoType = {
       ...inputs,
       userId: user.id,
-      priority: parseInt(inputs.priority.toString()),
+      priority: 1,
       title: inputs.title.trim(),
+      isChecked: false,
       description: inputs.description.trim(),
+      // users: [user]
     };
 
     try {
@@ -97,13 +97,11 @@ const AddTodo: React.FC<AddTodoProps> = ({ user }) => {
       setShowSuccessPopup(true);
 
       setInputs({
-        userId: user.id,
         title: "",
-        status: Status.progress,
+        status: TodoStatus.uncompleted,
         description: "",
-        priority: 1,
         icon: "wow",
-        deadline: "",
+        deadline: deadline,
         color: ColorsName[0],
       });
       setDeadline("");
@@ -289,4 +287,3 @@ const AddTodo: React.FC<AddTodoProps> = ({ user }) => {
 };
 
 export default AddTodo;
-

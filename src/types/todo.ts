@@ -5,8 +5,8 @@ export interface TodoType {
   userId: number;
   title: string;
   description: string;
-  status: Status;
-  priority: Int8Array;
+  status: TodoStatus;
+  priority: number;
   icon: string;
   deadline: string;
   color: Color;
@@ -17,21 +17,36 @@ export interface TodoType {
 
 export interface PostTodoType {
   userId: number;
+  priority: number;
   title: string;
   description: string;
-  status: Status;
+  status: TodoStatus;
   deadline: string;
   color: Color;
   isChecked: boolean
+
+  // users: UserType[]
 }
 
-export const Status = {
+export interface UpdateTodoType{
+  id: number
+  userId: number;
+  title: string;
+  description: string;
+  status: TodoStatus;
+  deadline: string;
+  color: Color;
+  isChecked: boolean;
+  priority: number;
+}
+
+export const TodoStatus = {
   progress: "progress",
   completed: "completed",
   uncompleted: "uncompleted",
 } as const;
 
-export type Status = keyof typeof Status;
+export type TodoStatus = keyof typeof TodoStatus;
 
   export const Color = {
     cyan: "cyan",

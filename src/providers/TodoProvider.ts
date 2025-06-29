@@ -1,9 +1,9 @@
-import type { TodoType } from "../types/todo";
+import type { PostTodoType, UpdateTodoType } from "../types/todo";
 import axiosInstance from "./axiosInstance";
 
 const TODO = "todolist";
 
-export const addTodo = async (data: any) => {
+export const addTodo = async (data: PostTodoType) => {
   try {
     const res = await axiosInstance.post(`${TODO}/`, data);
     console.log("Data todo: ", res);
@@ -56,7 +56,7 @@ export const getTodos = async () => {
   }
 };
 
-export const updateTodo = async (id: number, data: TodoType) => {
+export const updateTodo = async (id: number, data: UpdateTodoType) => {
   try {
     const res = await axiosInstance.put(`${TODO}/${id}`, data);
     return res.data.data;
