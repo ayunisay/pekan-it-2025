@@ -80,7 +80,7 @@ function App() {
                 <Route path="/todo/post" element={<AddTodo user={user} />} />
                 <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-                <Route path="/friend" element={<FindFriend />} />
+                <Route path="/friend" element={<FindFriend user={user}/>} />
                 <Route path="/grade" element={<Grade />} />
                 <Route path="/chat" element={<ChatPage />} />
               </Routes>

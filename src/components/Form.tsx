@@ -15,6 +15,10 @@ type FormInputProps = {
   required?: boolean;
   placeholder?: string;
   value?: string;
+  /**
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary';
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'name' | 'id' | 'placeholder' | 'value' | 'onChange'>;
 
@@ -29,13 +33,40 @@ const MyFormInput: React.FC<FormInputProps> = ({
   value,
   onChange,
   className = '',
+  variant,
   ...rest
 }) => {
   const inputId = id || name;
   const hasError = !!error;
 
+  
+  if (variant === 'secondary') {
+    return (
+      <div className="flex flex-col gap-1 font-helvetica">
+        <label htmlFor={inputId} className="text-white text-sm font-semibold">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+        <input
+          type={type}
+          name={name}
+          id={inputId}
+          value={value}
+          onChange={onChange}
+          className={`w-full rounded-md px-4 py-2 bg-[#FFFFFF]/25 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-400 ${className}`}
+          placeholder={placeholder}
+          required={required}
+          {...rest}
+        />
+        {hasError && (
+          <p className="text-sm text-red-400 mt-1">{error}</p>
+        )}
+      </div>
+    );
+  }
+
   return (
-    <div className="relative z-0 w-full mb-5 group">
+    <div className="relative z-0 w-full mb-5 group font-helvetica">
       <input
         type={type}
         name={name}

@@ -35,3 +35,28 @@ export interface LoginUserType {
   password: string;
 }
 
+export interface FriendReqType {
+  id?: number;
+  requesterId: number;
+  receiverId: number;
+  status: FriendStatus;
+  createdAt?: string;
+  updatedAt?: string
+}
+
+export const FriendStatus = {
+  PENDING: "PENDING",
+  ACCEPTED: "ACCEPTED",
+  BLOCKED: "BLOCKED",
+  REJECTED: "REJECTED",
+} as const;
+
+export type FriendStatus = keyof typeof FriendStatus;
+
+export interface FriendType {
+  id: number;
+  username: string;
+  name: string;
+  avatar: string;
+  status: FriendStatus
+}
