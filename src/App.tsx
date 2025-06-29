@@ -61,7 +61,7 @@ function App() {
           <div
             className={`${
               pathCheck
-                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_20%,_#5a7ba8_40%,_theme(colors.tertiary)_60%,_theme(colors.tertiary)_100%)]"
+                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_0%,_theme(colors.tertiary)_50%,_theme(colors.tertiary)_70%,_theme(colors.primary)_100%)]"
                 : "bg-tertiary"
             } min-h-screen flex flex-col`}
           >
@@ -73,10 +73,10 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/profile/:username" element={<Profile />} />
+                <Route path="/profile/:username" element={<Profile currentUser={user}/>} />
 
                 <Route path="/todo" element={<TodoList user={user} />} />
-                <Route path="/todo/detail" element={<TodoDetail />} />
+                {/* <Route path="/todo/detail" element={<TodoDetail />} /> */}
                 <Route path="/todo/post" element={<AddTodo user={user} />} />
                 <Route path="/pomodoro" element={<PomodoroTimer />} />
 
