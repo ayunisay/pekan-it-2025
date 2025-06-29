@@ -3,7 +3,7 @@ import profileIcon1 from "../assets/icons/profileIcon1.png";
 import profileIcon2 from "../assets/icons/profileIcon2.png";
 import tugasIcon1 from "../assets/icons/tugasIcon1.png";
 import tugasIcon2 from "../assets/icons/tugasIcon2.png";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Menu, X } from "lucide-react";
 import type { UserType as User } from "../types/user";
 import useGetUser from "../hooks/useGetUser";
@@ -19,6 +19,7 @@ const Navbar = ({ user }: NavbarProps) => {
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navigate = useNavigate()
 
   const handleScroll = () => {
     const offset = window.scrollY;
@@ -29,11 +30,20 @@ const Navbar = ({ user }: NavbarProps) => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
+const handleLogout = () => {
+  try {
+    logout(false); 
+    // navigate("/")
+    navigate("/", { replace: true });
+    window.location.reload();
+    navigate("/", { replace: true });
+    window.location.reload();
     setIsProfileOpen(false);
     setIsMenuOpen(false);
-  };
+  } catch (e) {
+    console.error("Logout gagal:", e);
+  }
+};
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
