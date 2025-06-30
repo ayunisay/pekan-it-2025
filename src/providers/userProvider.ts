@@ -84,7 +84,6 @@ export const updateUser = async (id: number, data: UpdateUserType) => {
     try {
         const formData = new FormData();
         
-        // Append data biasa
         if (data.username) formData.append('username', data.username);
         if (data.name) formData.append('name', data.name);
         if (data.email) formData.append('email', data.email);
@@ -109,9 +108,8 @@ export const updateUser = async (id: number, data: UpdateUserType) => {
         if (!res.data || !res.data.data) {
             console.error("Invalid response format from server");
         }
-        console.log("Hereeesss");
         console.log("Helooo",res.data.data)
-        return res.data;
+        return res.data.data;
     } catch (e: any) {
         console.error("Error response:", e.response?.data);
         console.error("Error status:", e.response?.status);
@@ -122,13 +120,16 @@ export const updateUser = async (id: number, data: UpdateUserType) => {
 export const getUserByUsn = async (username: string) => {
   try {
     const res = await axiosInstance.get(`${USER}/usn/${username}`);
-    console.log("Data : ", res);
+    // console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get username API");
     throw e;
   }
 };
+
+
+//FRIEND SECTION
 
 export const getFriends = async (id: number, status: string) => {
   try {

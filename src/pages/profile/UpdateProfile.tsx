@@ -32,7 +32,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ onClose, user }) => {
         const data: UpdateUserType = {
             ...inputs,
             avatar: user.avatar,
-            role: "user" as 'user',
+            role: user.role,
             newAvatar: imgRef.current?.files?.[0] ?? undefined,
         };
         console.log("Data to send:", data);
@@ -40,6 +40,7 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ onClose, user }) => {
         console.log("Data values:", Object.values(data));
 
         const updated = await updateUser(user.id!, data);
+        console.log("token", updated.token)
         onClose()      
         Cookies.remove("token");
         Cookies.set("token", updated.token, {

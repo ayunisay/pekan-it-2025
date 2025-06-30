@@ -34,7 +34,10 @@ const Login = () => {
       refetch();
       setTimeout(() => {
         setShowSuccessPopup(false);
-        navigate("/");
+        navigate("/", { replace: true });
+        window.location.reload();
+        navigate("/", { replace: true });
+        window.location.reload();
       }, 1500);
 
       setInputs({
