@@ -13,11 +13,17 @@ import type {
   ResponseApiErrorType,
   ResponseApiType,
 } from "../../types/apiType";
-import { Undo2, UserRoundPlus, UsersRound, X } from "lucide-react";
+import {
+  Undo2,
+  UserRoundPlus,
+  UsersRound,
+  X,
+} from "lucide-react";
 import socket from "../../socket/socket";
 import { cn } from "../../utils/cn";
 import MessageBubble from "../../components/chats/MessageBubble";
 import type {
+  GroupchatMemberType,
   GroupchatMessageType,
   GroupchatType,
   JoinedUserGroupChatType,
@@ -41,6 +47,7 @@ import useToast from "@/hooks/useHotToast";
 import { createFormData } from "@/helpers/formDataHelper";
 import { formatCreationDate } from "@/utils/string";
 import AddGroupMemberDialog from "./AddGroupMemberDialog";
+import GroupChatMemberList from "./GroupChatMemberList";
 
 const GroupChatPage = () => {
   const [selectedGroupChat, setSelectedGroupChat] =
@@ -59,7 +66,8 @@ const GroupChatPage = () => {
   });
   const [isShowAlert, setIsShowAlert] = useState<boolean>(false);
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState<boolean>(false);
-  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState<boolean>(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] =
+    useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputMessageRef = useRef<HTMLInputElement>(null);
   const { user, loading: loadingGetUser } = useGetUser();
@@ -84,6 +92,10 @@ const GroupChatPage = () => {
     ResponseApiType<GroupchatType>
   >(`${GROUP_CHAT_EP}`);
 
+  const { deleteData: deleteMemberFromGroupchat } = useDeleteData<
+    ResponseApiType<GroupchatMemberType>
+  >(`${GROUP_CHAT_EP}/member`);
+
   const { pushToast, updateToast } = useToast();
 
   useEffect(() => {
@@ -103,8 +115,8 @@ const GroupChatPage = () => {
       console.error(error);
       pushToast({
         message: "Gagal mengirim pesan",
-        isError: true
-      })
+        isError: true,
+      });
     };
 
     socket.on("receive new group chat message", handleReceiveMessage);
@@ -135,8 +147,8 @@ const GroupChatPage = () => {
           console.error(error);
           pushToast({
             message: "Gagal mendapatkan pesan grup",
-            isError: true
-          })
+            isError: true,
+          });
         };
 
         socket.emit("group chat", activeGroup.toString());
@@ -168,6 +180,7 @@ const GroupChatPage = () => {
       updateInitialUrl(`${GROUP_CHAT_EP}/user/${user.id}`, true, {});
     }
   }, [user]);
+
   useEffect(() => {
     if (messagesEndRef.current) {
       setTimeout(() => {
@@ -287,6 +300,45 @@ const GroupChatPage = () => {
     }
   };
 
+  const handleRemoveUserFromGroup = async (member: GroupchatMemberType) => {
+    const toastId = pushToast({
+      message: "Mengeluarkan...",
+      isLoading: true,
+    });
+    try {
+      console.log(member);
+      const result = await deleteMemberFromGroupchat(member.id);
+      if (result.code === 200) {
+        let filteredMember = selectedGroupChat?.members
+          ? [...selectedGroupChat.members]
+          : [];
+        filteredMember = filteredMember.filter(
+          (member2) => member2.id !== member.id
+        );
+        console.log(filteredMember);
+        
+        setSelectedGroupChat((prev) => {
+          if (prev && prev.members) {
+            return { ...prev, members: [...filteredMember] };
+          } else {
+            return null;
+          }
+        });
+        updateToast({
+          toastId,
+          message: "Berhasil",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      updateToast({
+        toastId,
+        message: "Gagal",
+        isError: true,
+      });
+    }
+  };
+
   return loadingGetUser ? (
     <ChatPageSkeleton />
   ) : !user ? (
@@ -375,7 +427,10 @@ const GroupChatPage = () => {
                   >
                     <Undo2 className="w-7 h-7" />
                   </button>
-                  <div className="w-full flex p-4 items-center" onClick={() => setIsGroupInfoOpen(!isGroupInfoOpen)}>
+                  <div
+                    className="w-full flex p-4 items-center"
+                    onClick={() => setIsGroupInfoOpen(!isGroupInfoOpen)}
+                  >
                     {selectedGroupChat.image ? (
                       <img
                         src={selectedGroupChat.image}
@@ -383,7 +438,7 @@ const GroupChatPage = () => {
                         className="w-10 h-10 rounded-full mr-4"
                       />
                     ) : (
-                      <UsersRound className="w-10 h-10 rounded-full bg-gray-400 p-1" />
+                      <UsersRound className="w-10 h-10 rounded-full bg-gray-400 p-1 mr-4" />
                     )}
                     <h2 className="text-lg font-semibold text-white">
                       {selectedGroupChat.name}
@@ -444,6 +499,8 @@ const GroupChatPage = () => {
                   </form>
                 </div>
               </div>
+
+              {/* Side page desc group */}
               <div
                 className={`z-10 ${
                   isGroupInfoOpen ? "w-2/3" : "w-0"
@@ -483,12 +540,20 @@ const GroupChatPage = () => {
                   </div>
                 </section>
                 <section className="text-slate-50 bg-[#16243B]/80 backdrop-blur-sm h-full">
-                  <div className="flex gap-2 items-center cursor-pointer p-4 hover:bg-[#333d50]" onClick={() => setIsAddMemberDialogOpen(true)}>
+                  <div
+                    className="flex gap-2 items-center cursor-pointer p-4 hover:bg-[#333d50]"
+                    onClick={() => setIsAddMemberDialogOpen(true)}
+                  >
                     <div className="bg-secondary p-2 rounded-full flex items-center justify-center text-gray-900">
                       <UserRoundPlus />
-
                     </div>
                     <p className="">Tambahkan teman</p>
+                  </div>
+                  <p className="px-4">{`${selectedGroupChat.members?.length} anggota grup`}</p>
+                  <div className="p-4 flex flex-col gap-2">
+                    {selectedGroupChat.members?.map((member) => (
+                      <GroupChatMemberList key={member.id} handleDelete={handleRemoveUserFromGroup} isUserItSelf={user.id === member.userId} member={member} />
+                    ))}
                   </div>
                 </section>
               </div>
@@ -512,7 +577,13 @@ const GroupChatPage = () => {
         </div>
       </div>
 
-      <AddGroupMemberDialog userId={user.id} selectedGroup={selectedGroupChat} handleOpen={() => setIsAddMemberDialogOpen(false)} isOpen={isAddMemberDialogOpen} />
+      <AddGroupMemberDialog
+        userId={user.id}
+        selectedGroup={selectedGroupChat}
+        setSelectedGroup={setSelectedGroupChat}
+        handleOpen={() => setIsAddMemberDialogOpen(false)}
+        isOpen={isAddMemberDialogOpen}
+      />
 
       <AlertDialog
         open={isShowAlert}

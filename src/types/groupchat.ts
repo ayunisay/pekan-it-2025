@@ -12,6 +12,7 @@ export interface GroupchatType {
 };
 
 export interface GroupchatMemberType {
+    id: number;
     userId: number;
     groupId: number;
     user: UserType;

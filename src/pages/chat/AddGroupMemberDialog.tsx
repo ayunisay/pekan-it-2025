@@ -7,82 +7,99 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { GROUP_CHAT_EP, USER_EP } from "@/core/endpoints";
 import { useFetchData, usePostData } from "@/hooks/useFetchData";
 import useToast from "@/hooks/useHotToast";
 import type { ResponseApiType } from "@/types/apiType";
-import type { GroupchatType } from "@/types/groupchat";
+import type { GroupchatMemberType, GroupchatType } from "@/types/groupchat";
 import type { UserType } from "@/types/user";
 import { UsersRound, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 type PropsType = {
   selectedGroup: GroupchatType | null;
+  setSelectedGroup: Dispatch<SetStateAction<GroupchatType | null>>;
   userId: number;
   isOpen: boolean;
   handleOpen: () => void;
 };
 
 const AddGroupMemberDialog = React.memo(
-  ({ isOpen, handleOpen, selectedGroup, userId }: PropsType) => {
-    const [group, setGroup] = useState<GroupchatType | null>(selectedGroup);
+  ({
+    isOpen,
+    handleOpen,
+    selectedGroup,
+    setSelectedGroup,
+    userId,
+  }: PropsType) => {
     const [selectedUser, setSelectedUser] = useState<UserType[]>([]);
+    const [availableUserToJoinGroup, setAvailableUserToJoinGroup] = useState<
+      UserType[]
+    >([]);
     const [
-      { apiData: userFriends, loading: loadingGetUserFriend },
-      { reCallAPI: reFetchUserFriends, setData: setUserFriends },
+      { apiData: userFriends, loading: loadingGetUserFriend }
     ] = useFetchData<ResponseApiType<UserType[]>>({
       url: `${USER_EP}/friends/${userId}`,
       params: {
         status: "accepted",
       },
-      initialCall: false,
     });
 
-    const { postData: addMember } = usePostData(
-      `${GROUP_CHAT_EP}/member`
-    );
+    const { postData: addMember } = usePostData<
+      ResponseApiType<{
+        addedMembers: GroupchatMemberType[];
+        alreadyJoinedUsers: GroupchatMemberType[];
+      }>
+    >(`${GROUP_CHAT_EP}/member`);
 
     const { pushToast, updateToast } = useToast();
 
     useEffect(() => {
-      if (isOpen && !userFriends.data) {
-        console.log("fetch");
-        reFetchUserFriends();
-      }
       const handleJoinedUser = () => {
-        if (userFriends.data && group?.members) {
+        if (availableUserToJoinGroup.length > 0 && selectedGroup?.members) {
           const joinedMemberIds = new Set(
-            group.members.map((member) => member.userId)
+            selectedGroup.members.map((member) => member.userId)
           );
-          const filteredUserFriends = userFriends.data.filter((user) => {
-            return !joinedMemberIds.has(user.id);
-          });
-          setUserFriends((prev) => ({ ...prev, data: filteredUserFriends }));
+          const filteredUserFriends = availableUserToJoinGroup.filter(
+            (user) => {
+              return !joinedMemberIds.has(user.id);
+            }
+          );
+          setAvailableUserToJoinGroup(filteredUserFriends);
         } else {
           console.warn(
             "userFriends.data atau selectedGroup.members tidak tersedia."
           );
-          // setUserFriends(prev => ({...prev, data: []}));
         }
       };
-      handleJoinedUser();
-      return () => {
-        handleJoinedUser()
+
+      if (userFriends.data) {
+        setAvailableUserToJoinGroup(() => userFriends.data);
+        handleJoinedUser();
       }
+      return () => {
+        handleJoinedUser();
+      };
     }, [isOpen, userFriends.code]);
 
     const handleOpenChange = () => {
       setSelectedUser([]);
-      setUserFriends([] as unknown as ResponseApiType<UserType[]>);
+      setAvailableUserToJoinGroup([]);
       handleOpen();
     };
 
     const handleSelectMember = (member: UserType) => {
       setSelectedUser((prev) => [...prev, member]);
       const filteredFriends = [
-        ...userFriends.data.filter((user) => user.id !== member.id),
+        ...availableUserToJoinGroup.filter((user) => user.id !== member.id),
       ];
-      setUserFriends((prev) => ({ ...prev, data: filteredFriends }));
+      setAvailableUserToJoinGroup(filteredFriends);
     };
 
     const handleUnselectMember = (member: UserType) => {
@@ -90,57 +107,72 @@ const AddGroupMemberDialog = React.memo(
         ...selectedUser.filter((user) => user.id !== member.id),
       ];
       setSelectedUser(newSelectedUser);
-      setUserFriends((prev) => ({ ...prev, data: [...prev.data, member] }));
+      setAvailableUserToJoinGroup((prev) => ([...prev, member]));
     };
 
     const handleSubmit = async () => {
       const toastId = pushToast({
         message: "Menambahkan teman...",
         isLoading: true,
-      })
+      });
+
       try {
-        let data: unknown = [...selectedUser.map(el => el.id)]
+        let data: unknown = [...selectedUser.map((el) => el.id)];
         data = JSON.stringify(data);
-        await addMember({
-          userId: data,
-        }, `${group?.id}?manyMember=true`);
+        const newMember = await addMember(
+          {
+            userId: data,
+          },
+          `${selectedGroup?.id}?manyMember=true`
+        );
         updateToast({
           toastId,
           message: "Berhasil",
         });
 
-        const test = selectedUser.map((user) => ({
-          userId: user.id,
-          groupId: group?.id as number,
-          user: user,
-          group: group as GroupchatType,
-        }));
-
-        setGroup((prev) => {
-          if(prev) {
+        setSelectedGroup((prev) => {
+          if (prev) {
             return {
               ...prev,
-              members: [...(prev.members ?? []), ...test]};
+              members: prev.members
+                ? [
+                    ...prev.members,
+                    ...(Array.isArray(newMember.data.addedMembers)
+                      ? newMember.data.addedMembers
+                      : [newMember.data.addedMembers]),
+                  ]
+                : Array.isArray(newMember.data.addedMembers)
+                ? newMember.data.addedMembers
+                : [newMember.data.addedMembers],
+            };
           } else {
-            return null
+            return null;
           }
         });
+
+        if (newMember.data.alreadyJoinedUsers.length > 0) {
+          newMember.data.alreadyJoinedUsers.map((member) =>
+            console.warn(
+              `User with ID ${member.id} already joined Group ${member.groupId}`
+            )
+          );
+        }
       } catch (error) {
         console.error(error);
         updateToast({
           toastId,
           message: "Gagal menambahkan teman.",
-          isError: true
-        })
+          isError: true,
+        });
       } finally {
-        handleOpenChange()
+        handleOpenChange();
       }
     };
 
     return (
       <Dialog onOpenChange={handleOpenChange} open={isOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-[#16243B]">
-          <DialogHeader className="text-slate-50">
+        <DialogContent className="sm:max-w-[425px] text-slate-50 bg-[#16243B]">
+          <DialogHeader>
             <DialogTitle>Tambahkan teman</DialogTitle>
             <DialogDescription className="text-slate-300">
               Tambahkan temanmu kedalam grup untuk memulai diskusi denganmu!
@@ -175,11 +207,14 @@ const AddGroupMemberDialog = React.memo(
           {isOpen && (
             <div className="bg-[#16243B] max-h-[25rem] overflow-auto">
               {loadingGetUserFriend ? (
-                <></>
-              ) : !userFriends || userFriends?.data?.length === 0 ? (
-                <></>
+                [1, 2, 3].map((_, idx) => <FriendListSkeleton key={idx} />)
+              ) : !availableUserToJoinGroup ||
+                availableUserToJoinGroup.length === 0 ? (
+                <p className="text-center">
+                  Tidak ada teman yang dapat dimasukkan kedalam grup.
+                </p>
               ) : (
-                userFriends.data?.map((user) => (
+                availableUserToJoinGroup?.map((user) => (
                   <FriendList
                     data={user}
                     key={user.id}
@@ -192,7 +227,13 @@ const AddGroupMemberDialog = React.memo(
 
           {selectedUser.length !== 0 && (
             <DialogFooter>
-              <Button className="cursor-pointer" onClick={handleSubmit} type="submit">Tambahkan</Button>
+              <Button
+                className="cursor-pointer"
+                onClick={handleSubmit}
+                type="submit"
+              >
+                Tambahkan
+              </Button>
             </DialogFooter>
           )}
         </DialogContent>
@@ -225,4 +266,13 @@ function FriendList({ data, handleSelectUser }: PropsFriendListType) {
       <h2 className="text-lg font-semibold text-white">{data.name}</h2>
     </div>
   );
+}
+
+function FriendListSkeleton() {
+  return (
+    <div className="flex items-center gap-2 hover:bg-[#333d50] p-2 rounded-md">
+      <Skeleton className="w-10 h-10 rounded-full" />
+      <Skeleton className="w-[6rem] h-5 rounded-sm" />
+    </div>
+  )
 }
