@@ -19,7 +19,7 @@ const Navbar = ({ user }: NavbarProps) => {
   const [isTaskOpen, setIsTaskOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleScroll = () => {
     const offset = window.scrollY;
@@ -30,20 +30,20 @@ const Navbar = ({ user }: NavbarProps) => {
     }
   };
 
-const handleLogout = () => {
-  try {
-    logout(false); 
-    // navigate("/")
-    navigate("/", { replace: true });
-    window.location.reload();
-    navigate("/", { replace: true });
-    window.location.reload();
-    setIsProfileOpen(false);
-    setIsMenuOpen(false);
-  } catch (e) {
-    console.error("Logout gagal:", e);
-  }
-};
+  const handleLogout = () => {
+    try {
+      logout(false);
+      // navigate("/")
+      navigate("/", { replace: true });
+      window.location.reload();
+      navigate("/", { replace: true });
+      window.location.reload();
+      setIsProfileOpen(false);
+      setIsMenuOpen(false);
+    } catch (e) {
+      console.error("Logout gagal:", e);
+    }
+  };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -87,7 +87,7 @@ const handleLogout = () => {
             </Link>
           </div>
 
-          <div className="md:hidden">
+          <div className="md:hidden z-50">
             <button
               onClick={toggleMenu}
               className="text-white focus:outline-none"
@@ -108,10 +108,8 @@ const handleLogout = () => {
             } md:relative md:bg-transparent md:h-auto md:py-0`}
           >
             <ul
-              className={`flex ${
-                isMenuOpen
-                  ? "flex-col items-center space-y-8 text-xl"
-                  : "flex-row space-x-6"
+              className={`flex items-center ${
+                isMenuOpen ? "flex-col space-y-8 text-xl" : "flex-row space-x-6"
               } md:flex-row md:space-x-6 md:space-y-0`}
             >
               <li>
@@ -194,68 +192,67 @@ const handleLogout = () => {
                   </ul>
                 )}
               </li>
-            </ul>
-
-            <div className={`relative ${isMenuOpen ? "mt-8" : "md:ml-10"}`}>
-              {user ? (
-                // logged in
-                <div>
-                  <button
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+              <li>
+                {user ? (
+                  // logged in
+                  <div>
+                    <button
+                      onClick={() => setIsProfileOpen(!isProfileOpen)}
+                      className={`${
+                        isProfileActive ? "text-yellow-400" : "text-white"
+                      } group flex flex-col items-center gap-1 focus:outline-none`}
+                    >
+                      <img
+                        src={isProfileActive ? profileIcon2 : profileIcon1}
+                        alt="Profile"
+                        className="w-6 group-hover:opacity-70"
+                      />
+                      <p className="text-xs">{user.name}</p>
+                    </button>
+                    {isProfileOpen && (
+                      <ul className="absolute right-0 top-full mt-2 w-40 bg-white rounded-2xl shadow-lg z-10 text-gray-800">
+                        <li>
+                          <Link
+                            to={`/profile/${user.username}`}
+                            className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-t-2xl"
+                            onClick={() => {
+                              setIsProfileOpen(false);
+                              setIsMenuOpen(false);
+                            }}
+                          >
+                            Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-b-2xl"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                ) : (
+                  // not logged in
+                  <Link
+                    to="/login"
                     className={`${
-                      isProfileActive ? "text-yellow-400" : "text-white"
-                    } group flex flex-col items-center gap-1 focus:outline-none`}
+                      isActive("/login") ? "text-yellow-400" : "text-white"
+                    } group flex flex-col items-center gap-1`}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     <img
-                      src={isProfileActive ? profileIcon2 : profileIcon1}
-                      alt="Profile"
+                      src={isActive("/login") ? profileIcon2 : profileIcon1}
+                      alt="Login"
                       className="w-6 group-hover:opacity-70"
                     />
-                    <p className="text-xs">{user.name}</p>
-                  </button>
-                  {isProfileOpen && (
-                    <ul className="absolute right-0 top-full mt-2 w-40 bg-white rounded-2xl shadow-lg z-10 text-gray-800">
-                      <li>
-                        <Link
-                          to={`/profile/${user.username}`}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-t-2xl"
-                          onClick={() => {
-                            setIsProfileOpen(false);
-                            setIsMenuOpen(false);
-                          }}
-                        >
-                          Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-200 rounded-b-2xl"
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                // not logged in
-                <Link
-                  to="/login"
-                  className={`${
-                    isActive("/login") ? "text-yellow-400" : "text-white"
-                  } group flex flex-col items-center gap-1`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <img
-                    src={isActive("/login") ? profileIcon2 : profileIcon1}
-                    alt="Login"
-                    className="w-6 group-hover:opacity-70"
-                  />
-                  <p className="text-xs">Login</p>
-                </Link>
-              )}
-            </div>
+                    <p className="text-xs">Login</p>
+                  </Link>
+                )}
+              </li>
+            </ul>
           </div>
         </div>
       </nav>
