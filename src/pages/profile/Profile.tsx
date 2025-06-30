@@ -14,7 +14,7 @@ import { getTodoByUser } from "../../providers/TodoProvider";
 import TodoTile from "../../components/todo/TodoTile";
 
 interface ProfilePageProps {
-  currentUser: UserType | null
+  currentUser: UserType | null;
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
@@ -25,7 +25,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
   const { username } = useParams();
   const [user, setUser] = useState<User>();
   const [loading, setLoading] = useState(false);
-  const [todos, setTodos] = useState<TodoType[]>([])
+  const [todos, setTodos] = useState<TodoType[]>([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -43,21 +43,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
 
   useEffect(() => {
     const fetchTodo = async () => {
-      setLoading(true)
-      if(!user?.id) return
+      setLoading(true);
+      if (!user?.id) return;
       try {
-        const data = await getTodoByUser(user.id)
-        setTodos(data)
-        setLoading(false)
+        const data = await getTodoByUser(user.id);
+        setTodos(data);
+        setLoading(false);
       } catch (error: any) {
-        console.error(error)
+        console.error(error);
       }
-    }
-    fetchTodo()
-  }, [user?.id])
+    };
+    fetchTodo();
+  }, [user?.id]);
 
   const handleButtonClick = () => {
-    logout();
+    // logout();
+    navigate("/friend");
     setIsOpen(true); // Open the popup
   };
 
@@ -74,18 +75,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
     return <div className="text-white text-center mt-10">Redirecting...</div>;
   }
 
-  const formatDate = (dateString: string) => { //Formmatin string ke Date
-    const options: Intl.DateTimeFormatOptions = {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    };
-    return new Date(dateString).toLocaleDateString("id-ID", options);
-  };
-
+  //  const toDateKey = (date: Date) => date.toISOString().split("T")[0];
   const totalTodos = todos.length;
   const completedCount = todos.filter((todo) => todo.isChecked).length;
   const percentage = totalTodos === 0 ? 0 : (completedCount / totalTodos) * 100;
+  const completedPercentage = Number(percentage.toFixed(1));
 
   return (
     <>
@@ -93,11 +87,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
         <div className="flex flex-col items-center w-full xl:w-1/4 xl:max-w-xs gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           <div className="relative group">
             <img
-              src={user.avatar ?? profilePic}
+              src={user.avatar == null ? profilePic : user.avatar}
               alt="Profile"
-              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 rounded-full object-cover shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-xl"
+              className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 xl:w-56 xl:h-56 rounded-full object-cover shadow-lg transition-all duration-300 ease-in-out group-hover:shadow-xl text-center"
             />
-            {currentUser?.id == user.id ?
+            {currentUser?.id == user.id ? (
               <div className="absolute bottom-0 right-0 transform translate-x-1 translate-y-1">
                 <MyButton
                   text="Edit Profile"
@@ -106,8 +100,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
                   onClick={handleOpenUpdate}
                 />
               </div>
-              : ""  
-            }
+            ) : (
+              ""
+            )}
           </div>
 
           <div className="text-center w-full">
@@ -154,19 +149,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
                 <h1 className="font-bold text-lg sm:text-xl md:text-2xl mb-2 md:mb-3 text-white">
                   Me
                 </h1>
-                <ProgressBar tasks={totalTodos} completedPercentage={percentage} />
+                <ProgressBar
+                  tasks={totalTodos}
+                  completedPercentage={completedPercentage}
+                />
               </div>
 
               <div className="bg-tertiary px-4 sm:px-6 md:px-8 lg:px-10 py-4 sm:py-5 md:py-6 w-full h-auto min-h-[8rem] sm:min-h-[9rem] md:min-h-[10rem] rounded-2xl md:rounded-3xl lg:rounded-4xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
                 <h1 className="font-bold text-lg sm:text-xl md:text-2xl mb-2 md:mb-3 text-white">
                   Group
                 </h1>
-                <ProgressBar tasks={totalTodos} completedPercentage={percentage} />
+                <ProgressBar
+                  tasks={totalTodos}
+                  completedPercentage={completedPercentage}
+                />
               </div>
             </div>
           </div>
 
-            {/* Belum ada table pomodoro di be */}
+          {/* Belum ada table pomodoro di be */}
           {/* <div className="flex flex-col gap-4 md:gap-6 font-helvetica">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 md:mb-6 gap-3 sm:gap-0">
               <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold transition-all duration-200">
@@ -189,7 +190,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
           </div> */}
         </div>
       </div>
-      
+
       {/* Todo-List Section dengan spacing yang diperbaiki */}
       <div className="px-3 sm:px-4 md:px-6 lg:px-8 pb-6 md:pb-8">
         {/* <h1 className="font-bold text-lg sm:text-xl md:text-2xl mb-4 md:mb-6 text-white text-center">
@@ -204,7 +205,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
                           isChecked={item.isChecked}
                           label={item.title}
                           color={item.color}
-                          date={formatDate(item.deadline)}
+                          date={toDateKey(new Date(item.deadline))}
                           id={item.id}
                           // onChange={(checked) => handleChecklist(item, checked)}
                         />
@@ -216,7 +217,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
           <Calendar todos={todos} />
         </div>
       </div>
-      
+
       {isUpdateOpen && (
         <UpdateProfile onClose={handleCloseUpdate} user={user} />
       )}
@@ -267,4 +268,3 @@ const Button: React.FC = () => {
 };
 
 export default ProfilePage;
-
