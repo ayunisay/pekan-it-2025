@@ -107,7 +107,6 @@ const useGetUser = (): UseGetUserReturn  => {
   };
 
   useEffect(() => {
-    console.log('Running fetchUser...');
     fetchUser();
   }, []);
 

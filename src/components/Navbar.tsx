@@ -6,6 +6,7 @@ import tugasIcon2 from "../assets/icons/tugasIcon2.png";
 import { Link, useLocation, useNavigate } from "react-router";
 import { LogOut, Menu, X } from "lucide-react";
 import type { UserType as User } from "../types/user";
+import { cn } from "../utils/cn";
 import useGetUser from "../hooks/useGetUser";
 
 interface NavbarProps {
@@ -105,8 +106,10 @@ const Navbar = ({ user }: NavbarProps) => {
             } md:relative md:bg-transparent md:h-auto md:py-0`}
           >
             <ul
-              className={`flex items-center ${
-                isMenuOpen ? "flex-col space-y-8 text-xl" : "flex-row space-x-6"
+              className={`flex ${
+                isMenuOpen
+                  ? "flex-col items-center space-y-8 text-xl"
+                  : "flex-row space-x-6"
               } md:flex-row md:space-x-6 md:space-y-0`}
             >
               <li>
@@ -115,8 +118,12 @@ const Navbar = ({ user }: NavbarProps) => {
                 </Link>
               </li>
               <li>
-                <Link to="/friend" className={linkClass("/friend")} onClick={() => setIsMenuOpen(false)}>
-                  Temukan teman
+                <Link
+                  to="/find"
+                  className={linkClass("/find")}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Find Friends
                 </Link>
               </li>
               <li>
@@ -124,10 +131,35 @@ const Navbar = ({ user }: NavbarProps) => {
                   Peringkat
                 </Link>
               </li>
-              <li>
-                <Link to="/chat" className={linkClass("/chat")} onClick={() => setIsMenuOpen(false)}>
-                  Chat
+              <li className="relative group cursor-pointer">
+                <Link
+                  to="#"
+                  className={
+                    location.pathname.includes("chat")
+                      ? "text-yellow-400 hover:text-yellow-300 font-semibold"
+                      : "text-white hover:text-gray-300 font-semibold"
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Chats
                 </Link>
+                <div className="absolute flex flex-col items-center w-[10rem] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-10 bg-white overflow-hidden">
+                  <Link
+                    className={cn(
+                      "w-full px-4 p-2 hover:text-secondary hover:bg-primary transition-colors duration-200", location.pathname === "/private-chat" && "bg-primary text-secondary") }
+                    to={"/private-chat"}
+                  >
+                    Private Chat
+                  </Link>
+                  <Link
+                    className={cn(
+                      "w-full px-4 p-2 hover:text-secondary hover:bg-primary transition-colors duration-200", location.pathname === "/group-chat" && "bg-primary text-secondary"
+                    )}
+                    to={"/group-chat"}
+                  >
+                    Group Chat
+                  </Link>
+                </div>
               </li>
               <li className="group relative flex flex-row justify-center items-center">
                 <button
@@ -163,7 +195,7 @@ const Navbar = ({ user }: NavbarProps) => {
                         To-do List
                       </Link>
                     </li>
-                    <li className="px-4 py-2 hover:bg-primary hover:text-yellow-400 cursor-pointer rounded-2xl">
+                    <li className="px-4 py-2 hover:bg-primary cursor-pointer rounded-2xl">
                       <Link
                         to="/pomodoro"
                         onClick={() => {

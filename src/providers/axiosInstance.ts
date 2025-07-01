@@ -66,7 +66,7 @@ export function setupInterceptorsTo(
 
 const axiosInstance = setupInterceptorsTo(
 	axios.create({
-		baseURL: `${import.meta.env.VITE_BACKEND_URI}`,
+		baseURL: `${import.meta.env.VITE_BACKEND_URI}/api`,
 		headers: {
 			// "Content-Type": "application/json",
 			"Access-Control-Allow-Origin": "*",

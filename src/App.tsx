@@ -9,27 +9,28 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FindFriend from "./pages/findFriend/FindFriend";
 import Grade from "./pages/grade/Grade";
-import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
 import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
+import PrivateChatPage from "./pages/chat/PrivateChatPage";
+import GroupChatPage from "./pages/chat/GroupChatPage";
+import BaseToaster from "./components/systems/BaseToaster";
 import { useEffect, useState } from "react";
 
 function App() {
   const location = useLocation();
   const pathCheck =
     location.pathname.startsWith("/profile") || location.pathname === "/friend";
-  const { user, loading, error } = useGetUser();
+  const { user, loading } = useGetUser();
 
-    
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
     const initializeApp = async () => {
       if (!loading) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         setIsAppReady(true);
       }
     };
@@ -66,6 +67,7 @@ function App() {
             } min-h-screen flex flex-col`}
           >
             <Navbar user={user} />
+            <BaseToaster />
             <main className="flex-grow">
               <Routes>
                 <Route index element={<Dashboard />} />
@@ -73,20 +75,24 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/profile/:username" element={<Profile currentUser={user}/>} />
+                <Route
+                  path="/profile/:username"
+                  element={<Profile currentUser={user} />}
+                />
 
                 <Route path="/todo" element={<TodoList user={user} />} />
                 {/* <Route path="/todo/detail" element={<TodoDetail />} /> */}
                 <Route path="/todo/post" element={<AddTodo user={user} />} />
                 <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-                <Route path="/friend" element={<FindFriend user={user}/>} />
+                <Route path="/friend" element={<FindFriend user={user} />} />
                 <Route path="/grade" element={<Grade />} />
-                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/private-chat" element={<PrivateChatPage />} />
+                <Route path="/group-chat" element={<GroupChatPage />} />
               </Routes>
             </main>
-              <Footer />
-            </div>
+            <Footer />
+          </div>
         )}
       </div>
     </>

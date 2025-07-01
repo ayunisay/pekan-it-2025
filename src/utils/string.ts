@@ -67,3 +67,37 @@ export const formatMessageDeliveryTime = (isoString: string): string => {
   const formattedDate = localDate.toLocaleDateString('id-ID', optionsDate);
   return `${formattedDate}, ${formattedTime} WIB`;
 };
+
+export const formatCreationDate = (isoString: string): string => {
+  if (typeof isoString !== 'string' || !isoString.trim()) {
+    console.error("Input tidak valid: isoString harus berupa string non-kosong.");
+    return "tanggal tidak dikenal";
+  }
+
+
+  const date = new Date(isoString);
+
+  if (isNaN(date.getTime())) {
+    console.error(`Input tanggal tidak valid: "${isoString}"`);
+    return "tanggal tidak valid";
+  }
+
+  // Opsi format tanggal
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false, // Gunakan format 24 jam
+    // timezone: 'Asia/Jakarta' // Opsional: Tentukan zona waktu jika perlu override zona waktu lokal pengguna
+  };
+
+  try {
+    const formattedDate = new Intl.DateTimeFormat('id-ID', options).format(date);
+    return `${formattedDate}`;
+  } catch (error) {
+    console.error("Error saat memformat tanggal:", error);
+    return "tanggal tidak dapat diformat";
+  }
+};

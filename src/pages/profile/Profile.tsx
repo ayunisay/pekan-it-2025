@@ -34,7 +34,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
         const data = await getUserByUsn(username ?? "");
         setUser(data);
         setLoading(false);
-      } catch (e: any) {
+      } catch (e) {
         console.log(e);
       }
     };
@@ -49,7 +49,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
         const data = await getTodoByUser(user.id);
         setTodos(data);
         setLoading(false);
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
       }
     };
@@ -83,7 +83,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser }) => {
 
   return (
     <>
-      <div className="flex flex-col xl:flex-row w-full min-h-screen p-3 sm:p-4 md:p-6 lg:p-8 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-[7rem] text-white transition-all duration-300 ease-in-out">
+      <div className="flex flex-col xl:flex-row w-full min-h-screen p-3 sm:p-4 md:p-6 lg:p-8 gap-4 sm:gap-5 md:gap-6 lg:gap-8 mt-[7rem] text-white transition-all duration-300 ease-in-out ">
         <div className="flex flex-col items-center w-full xl:w-1/4 xl:max-w-xs gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           <div className="relative group">
             <img
