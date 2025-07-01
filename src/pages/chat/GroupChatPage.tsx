@@ -27,7 +27,7 @@ import type {
 } from "../../types/groupchat";
 import GroupChatListItem from "../../components/chats/group/GroupChatListItem";
 import useGetUser from "@/hooks/useGetUser";
-import ChatPageSkeleton from "./ChatPageSkeleton";
+import ChatPageSkeleton from "../../components/skeletons/ChatPageSkeleton";
 import UnauthorizedPage from "@/components/systems/UnauthorizedPage";
 import {
   AlertDialog,
@@ -41,8 +41,8 @@ import {
 import useToast from "@/hooks/useHotToast";
 import { createFormData } from "@/helpers/formDataHelper";
 import { formatCreationDate } from "@/utils/string";
-import AddGroupMemberDialog from "./AddGroupMemberDialog";
-import GroupChatMemberList from "./GroupChatMemberList";
+import AddGroupMemberDialog from "../../components/chats/group/AddGroupMemberDialog";
+import GroupChatMemberList from "../../components/chats/group/GroupChatMemberList";
 import SideBarAddGroup from "@/components/chats/group/SideBarAddGroup";
 
 const GroupChatPage = () => {

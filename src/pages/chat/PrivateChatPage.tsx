@@ -26,7 +26,7 @@ import { cn } from "../../utils/cn";
 import MessageBubble from "../../components/chats/MessageBubble";
 import ChatListItem from "../../components/chats/private/ChatListItem";
 import useGetUser from "@/hooks/useGetUser";
-import ChatPageSkeleton from "./ChatPageSkeleton";
+import ChatPageSkeleton from "../../components/skeletons/ChatPageSkeleton";
 import UnauthorizedPage from "@/components/systems/UnauthorizedPage";
 import useToast from "@/hooks/useHotToast";
 
