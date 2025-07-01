@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "../../ui/dropdown-menu";
 import {
   DropdownMenuGroup,
   DropdownMenuLabel,
@@ -25,11 +25,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import DeleteAlertDialog from "./DeleteAlertDialog";
+} from "../../ui/dialog";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import DeleteAlertDialog from "../DeleteAlertDialog";
 
 type PropsType = {
   isActive: boolean;
@@ -41,9 +41,13 @@ type PropsType = {
 
 const GroupChatListItem = React.memo(
   ({ group, isActive, onClick, handleDelete, handleUpdate }: PropsType) => {
+    const handleChatClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+      onClick()
+    }
     return (
       <div
-        onClick={onClick}
+        onClick={(e) => handleChatClick(e)}
         className={`group flex items-center p-3 cursor-pointer rounded-lg transition-colors duration-200 gap-1 ${
           isActive ? "bg-[#4A5568]" : "hover:bg-[#2D3748]"
         }`}
@@ -124,7 +128,7 @@ const DropDownSettingGroup = React.memo(
     };
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger className="cursor-pointer">
+        <DropdownMenuTrigger className="cursor-pointer" onClick={(e) => e.stopPropagation()}>
           <EllipsisVertical className="hidden group-hover:block text-slate-50 transition-all" />
         </DropdownMenuTrigger>
         <DropdownMenuContent

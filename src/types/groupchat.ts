@@ -22,7 +22,7 @@ export interface GroupchatMemberType {
 export interface PostGroupchatType {
     authorId: number;
     name: string;
-    image: string | null;
+    image: string | null | File;
 };
 
 export interface UpdateGroupchatType {

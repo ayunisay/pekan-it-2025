@@ -16,6 +16,7 @@ import type {
 import {
   Undo2,
   UserRoundPlus,
+  Users,
   UsersRound,
   X,
 } from "lucide-react";
@@ -30,7 +31,7 @@ import type {
   PostGroupchatMessageType,
   UpdateGroupchatType,
 } from "../../types/groupchat";
-import GroupChatListItem from "../../components/chats/GroupChatListItem";
+import GroupChatListItem from "../../components/chats/group/GroupChatListItem";
 import useGetUser from "@/hooks/useGetUser";
 import ChatPageSkeleton from "./ChatPageSkeleton";
 import UnauthorizedPage from "@/components/systems/UnauthorizedPage";
@@ -48,6 +49,7 @@ import { createFormData } from "@/helpers/formDataHelper";
 import { formatCreationDate } from "@/utils/string";
 import AddGroupMemberDialog from "./AddGroupMemberDialog";
 import GroupChatMemberList from "./GroupChatMemberList";
+import SideBarAddGroup from "@/components/chats/group/SideBarAddGroup";
 
 const GroupChatPage = () => {
   const [selectedGroupChat, setSelectedGroupChat] =
@@ -66,8 +68,8 @@ const GroupChatPage = () => {
   });
   const [isShowAlert, setIsShowAlert] = useState<boolean>(false);
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState<boolean>(false);
-  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] =
-    useState<boolean>(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState<boolean>(false);
+  const [isAddGroupSideOpen, setIsAddGroupSideOpen] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputMessageRef = useRef<HTMLInputElement>(null);
   const { user, loading: loadingGetUser } = useGetUser();
@@ -232,6 +234,7 @@ const GroupChatPage = () => {
   };
 
   const handleBackToListChat = () => {
+    setIsAddGroupSideOpen(false)
     setIsGroupInfoOpen(() => false);
     setActiveGroup(0);
     setSelectedGroupChat(null);
@@ -347,14 +350,33 @@ const GroupChatPage = () => {
     <main className="pt-16 pb-16">
       <div className="max-w-4/5 mx-auto p-4 sm:p-6 lg:p-8">
         <div className="bg-[#2D3748] rounded-2xl shadow-2xl flex md:h-[40rem] md:max-h-[40rem]">
+          {/* Add Group Sidebar */}
+          <SideBarAddGroup
+            user={user}
+            isOpen={isAddGroupSideOpen}
+            selectedGroupchat={selectedGroupChat}
+            setIsOpen={setIsAddGroupSideOpen}
+            reFetchGroupChats={reFetchGroupChats}
+          />
+
           {/* Sidebar */}
           <aside
             className={cn(
-              "w-1/3 min-w-[300px] bg-[#16243B] rounded-l-2xl p-4",
-              selectedGroupChat ? "hidden" : "flex flex-col"
+              "bg-[#16243B] rounded-l-2xl transition-discrete overflow-hidden duration-[400ms]",
+              selectedGroupChat ? "w-0 opacity-0" : "w-1/3 min-w-[300px] p-4",
+              isAddGroupSideOpen && "w-0 opacity-0 min-w-0 p-0"
             )}
           >
-            <h1 className="text-2xl font-bold text-white mb-4">Pesan Grup</h1>
+            <div className="w-full flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-white mb-4">Pesan Grup</h1>
+              <button
+                onClick={() => setIsAddGroupSideOpen(true)}
+                className="flex flex-col  items-center text-slate-50 rounded-full p-2 px-3 cursor-pointer hover:bg-[#333d50]"
+              >
+                <Users />
+                <p className="text-sm">Buat</p>
+              </button>
+            </div>
             <div className="relative mb-4">
               <MyFormInput
                 name="search"
@@ -379,7 +401,7 @@ const GroupChatPage = () => {
                   <MyButton
                     text={"Buat"}
                     variant="secondary"
-                    className="cursor-pointer hover:"
+                    className="cursor-pointer"
                   />
                 </div>
               ) : (
@@ -403,7 +425,7 @@ const GroupChatPage = () => {
 
           {/* Room Chat */}
           {selectedGroupChat ? (
-            <section className="w-full flex rounded-2xl overflow-hidden relative">
+            <section className="w-full flex rounded-2xl transition-all duration-200 overflow-hidden relative">
               <div
                 className="absolute inset-0 bg-cover bg-center opacity-50"
                 style={{
@@ -552,7 +574,12 @@ const GroupChatPage = () => {
                   <p className="px-4">{`${selectedGroupChat.members?.length} anggota grup`}</p>
                   <div className="p-4 flex flex-col gap-2">
                     {selectedGroupChat.members?.map((member) => (
-                      <GroupChatMemberList key={member.id} handleDelete={handleRemoveUserFromGroup} isUserItSelf={user.id === member.userId} member={member} />
+                      <GroupChatMemberList
+                        key={member.id}
+                        handleDelete={handleRemoveUserFromGroup}
+                        isUserItSelf={user.id === member.userId}
+                        member={member}
+                      />
                     ))}
                   </div>
                 </section>
@@ -600,7 +627,7 @@ const GroupChatPage = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction>Baik</AlertDialogAction>
+            <AlertDialogAction className="cursor-pointer">Baik</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
