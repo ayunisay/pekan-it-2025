@@ -17,45 +17,83 @@ import { Skeleton } from "./components/ui/skeleton";
 import PrivateChatPage from "./pages/chat/PrivateChatPage";
 import GroupChatPage from "./pages/chat/GroupChatPage";
 import BaseToaster from "./components/systems/BaseToaster";
+import { useEffect, useState } from "react";
 
 function App() {
   const location = useLocation();
   const pathCheck =
-    location.pathname === "/profile" || location.pathname === "/friend";
+    location.pathname.startsWith("/profile") || location.pathname === "/friend";
   const { user, loading, error } = useGetUser();
+
+  const [isAppReady, setIsAppReady] = useState(false);
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      if (!loading) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setIsAppReady(true);
+      }
+    };
+
+    initializeApp();
+  }, [loading]);
+
+  if (!isAppReady) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-tertiary">
+        <div className="text-center space-y-4">
+          <div className="mt-6">
+            <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-white mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* {error}  //soon (Blm dipikirin)*/}
-      {loading ? <Skeleton /> : ""}
-      <div
-        className={`${
-          pathCheck
-            ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_20%,_#5a7ba8_40%,_theme(colors.tertiary)_60%,_theme(colors.tertiary)_100%)]"
-            : "bg-tertiary"
-        } min-h-screen flex flex-col`}
-      >
-        <Navbar user={user} />
-        <BaseToaster />
-        <Routes>
-          <Route index element={<Dashboard />} />
+      <div className="min-h-screen flex flex-col">
+        {/* {error}  //soon (Blm dipikirin)*/}
+        {loading ? (
+          <div className="flex-grow flex items-center justify-center">
+            <Skeleton className="w-[20rem] h-[4rem]" />
+          </div>
+        ) : (
+          <div
+            className={`${
+              pathCheck
+                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_0%,_theme(colors.tertiary)_50%,_theme(colors.tertiary)_70%,_theme(colors.primary)_100%)]"
+                : "bg-tertiary"
+            } min-h-screen flex flex-col`}
+          >
+            <Navbar user={user} />
+            <main className="flex-grow">
+              <BaseToaster />
+              <Routes>
+                <Route index element={<Dashboard />} />
 
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/profile/:username"
+                  element={<Profile currentUser={user} />}
+                />
 
-          <Route path="/todo" element={<TodoList />} />
-          <Route path="/todo/detail" element={<TodoDetail />} />
-          <Route path="/todo/post" element={<AddTodo />} />
-          <Route path="/pomodoro" element={<PomodoroTimer />} />
+                <Route path="/todo" element={<TodoList user={user} />} />
+                {/* <Route path="/todo/detail" element={<TodoDetail />} /> */}
+                <Route path="/todo/post" element={<AddTodo user={user} />} />
+                <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-          <Route path="/find" element={<FindFriend />} />
-          <Route path="/grade" element={<Grade />} />
-          <Route path="/private-chat" element={<PrivateChatPage />} />
-          <Route path="/group-chat" element={<GroupChatPage />} />
-        </Routes>
-        <Footer />
+                <Route path="/friend" element={<FindFriend user={user} />} />
+                <Route path="/grade" element={<Grade />} />
+                <Route path="/private-chat" element={<PrivateChatPage />} />
+                <Route path="/group-chat" element={<GroupChatPage />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        )}
       </div>
     </>
   );

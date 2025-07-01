@@ -1,48 +1,65 @@
-import { useState } from "react";
-import type { TaskType } from "../../types/task";
+import { useEffect, useState } from "react";
+import type { Color, TodoType } from "../../types/todo";
 
 interface CalendarProps {
-  tasks: TaskType[];
+  todos: TodoType[];
 }
 
-const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
+const Calendar: React.FC<CalendarProps> = ({ todos }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [calendarDays, setCalendarDays] = useState<(Date | null)[]>([]);
+  const [tasksByDate, setTasksByDate] = useState<Map<string, TodoType[]>>(new Map());
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const toDateKey = (date: Date) => date.toISOString().split("T")[0]; 
+
+  useEffect(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const newDays: (Date | null)[] = [];
+    for (let i = 0; i < firstDayOfMonth; i++) newDays.push(null);
+    for (let i = 1; i <= daysInMonth; i++) newDays.push(new Date(year, month, i));
+
+    setCalendarDays(newDays);
+  }, [currentDate]);
+
+  useEffect(() => {
+    const taskMap = new Map<string, TodoType[]>();
+    todos.forEach((task) => {
+      const key = toDateKey(new Date(task.deadline));
+      if (!taskMap.has(key)) taskMap.set(key, []);
+      taskMap.get(key)!.push(task);
+    });
+    setTasksByDate(taskMap);
+  }, [todos]);
 
   const changeMonth = (offset: number) => {
-    setCurrentDate((prevDate) => {
-      const newDate = new Date(prevDate);
-      newDate.setMonth(newDate.getMonth() + offset);
+    setCurrentDate((prev) => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + offset);
       return newDate;
     });
   };
 
-  const getCalendarGrid = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-    const days = [];
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null);
+  const getColor = (color: Color) => {
+    switch (color) {
+      case "cyan":
+        return "bg-[#5CE3B1]";
+      case "dark_blue":
+        return "bg-[#16243B]";
+      case "yellow":
+        return "bg-[#DDB742]";
+      case "black":
+        return "bg-[#385484]";
+      default:
+        return "bg-[#00FFFF]";
     }
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-    return days;
   };
 
-  const calendarDays = getCalendarGrid();
-
-  // Get tasks
-  const getTasksForDay = (date: Date | null) => {
-    if (!date) return [];
-    const dateString = date.toISOString().split("T")[0]; // 'YYYY-MM-DD'
-    return tasks.filter((task) => task.date === dateString);
-  };
+  console.log(todos)
 
   return (
     <div className="bg-tertiary p-4 sm:p-6 rounded-2xl md:rounded-3xl shadow-lg mt-4 md:mt-6">
@@ -54,10 +71,7 @@ const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
           ‹
         </button>
         <h2 className="text-xl font-bold text-white">
-          {currentDate.toLocaleString("default", {
-            month: "long",
-            year: "numeric",
-          })}
+          {currentDate.toLocaleString("default", { month: "long", year: "numeric" })}
         </h2>
         <button
           onClick={() => changeMonth(1)}
@@ -66,6 +80,7 @@ const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
           ›
         </button>
       </div>
+
       <div className="grid grid-cols-7 gap-2">
         {daysOfWeek.map((day) => (
           <div
@@ -75,10 +90,11 @@ const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
             {day}
           </div>
         ))}
+
         {calendarDays.map((day, index) => {
-          const tasksOnDay = getTasksForDay(day);
-          const isToday =
-            day && day.toDateString() === new Date().toDateString();
+          const key = day ? toDateKey(day) : "";
+          const tasksOnDay = key && tasksByDate.has(key) ? tasksByDate.get(key)! : [];
+          const isToday = day?.toDateString() === new Date().toDateString();
 
           return (
             <div
@@ -89,18 +105,23 @@ const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
             >
               {day && (
                 <>
-                  <span className="text-base text-white">{day.getDate()}</span>
-                  {tasksOnDay.length > 0 && (
-                    <div className="absolute bottom-2 flex items-center justify-center gap-1">
-                      {tasksOnDay.slice(0, 3).map((task) => (
+                <span className="text-base text-white">{day.getDate()}</span>
+                {tasksOnDay.length > 0 && (
+                  <div className="absolute bottom-2 flex items-center justify-center gap-1">
+                    {tasksOnDay.slice(0, 3).map((task) => {
+                      console.log("Task color:", task.color);
+                      console.log("Task color:", getColor(task.color));
+                      return (
                         <div
                           key={task.id}
-                          className={`w-1.5 h-1.5 rounded-full ${task.color}`}
+                          className={`w-1.5 h-1.5 rounded-full ${getColor(task.color)}`}
                         ></div>
-                      ))}
-                    </div>
-                  )}
-                </>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+
               )}
             </div>
           );
@@ -110,4 +131,4 @@ const Calendar: React.FC<CalendarProps> = ({ tasks }) => {
   );
 };
 
-export default Calendar
+export default Calendar;

@@ -16,9 +16,9 @@
   --color-grey-accent:#D9D9D9;
 
   --color-todo-cyan:#5CE3B1;
-  --color-todo-dark-blue:'#16243B';
-  --color-todo-yellow:'#DDB742';
-  --color-todo-black:'#385484';
+  --color-todo-dark-blue:#16243B;
+  --color-todo-yellow:#DDB742;
+  --color-todo-black:#385484;
   --color-todo-sage:#00FFFF;
 
   --color-background: var(--background);

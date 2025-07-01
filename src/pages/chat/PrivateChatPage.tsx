@@ -1,10 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  FC,
+  FormEvent,
+  ChangeEvent,
+} from "react";
 import chatBg from "../../assets/images/chatBg.png";
 import { MyFormInput } from "../../components/Form";
 import { MyButton } from "../../components/Button";
 import { useFetchData } from "../../hooks/useFetchData";
 import { PRIVATE_CHAT_EP } from "../../core/endpoints";
 import { ChatListSkeleton } from "../../components/skeletons/ChatListSkeleton";
+import { Undo2, UserRound, Send, Paperclip, Smile } from "lucide-react";
 import type {
   PostPrivateChatMessageType,
   PrivateChatMessageType,
@@ -14,7 +22,6 @@ import type {
   ResponseApiErrorType,
   ResponseApiType,
 } from "../../types/apiType";
-import { Undo2, UserRound } from "lucide-react";
 import type { UserType } from "../../types/user";
 import socket from "../../socket/socket";
 import { cn } from "../../utils/cn";
@@ -25,7 +32,7 @@ const PrivateChatPage = () => {
   const [selectedUserChat, setSelectedUserChat] = useState<UserType | null>(
     null
   );
-  const [activeChat, setActiveChat] = useState<number>(0);
+  const [activeChatId, setactiveChatId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [messages, setMessages] = useState<PrivateChatMessageType[] | null>(
     null
@@ -85,7 +92,7 @@ const PrivateChatPage = () => {
   }, []);
 
   useEffect(() => {
-    if (activeChat) {
+    if (activeChatId) {
       if (socket.connected) {
         setLoadings((prev) => ({ ...prev, loadingLoadMessage: true }));
 
@@ -102,7 +109,7 @@ const PrivateChatPage = () => {
           alert(error.message);
         };
 
-        socket.emit("private chat", activeChat.toString());
+        socket.emit("private chat", activeChatId.toString());
         socket.on("get detail private chat message", handlePrivateChatMessage);
         socket.on(
           "get detail private chat message error",
@@ -125,7 +132,7 @@ const PrivateChatPage = () => {
       setMessages(null);
       setLoadings((prev) => ({ ...prev, loadingLoadMessage: false }));
     }
-  }, [activeChat]);
+  }, [activeChatId]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -141,7 +148,7 @@ const PrivateChatPage = () => {
 
     const handleEscPress = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setActiveChat(0);
+        setactiveChatId(0);
         setSelectedUserChat(null);
       }
     };
@@ -160,7 +167,7 @@ const PrivateChatPage = () => {
     setLoadings((prev) => ({ ...prev, loadingSendMessage: true }));
     const message: PostPrivateChatMessageType = {
       authorId: userId,
-      chatId: activeChat,
+      chatId: activeChatId,
       content: newMessage,
       image: null,
     };
@@ -170,25 +177,25 @@ const PrivateChatPage = () => {
   };
 
   const handleSelectedChat = (chatId: number, userChat: UserType) => {
-    setActiveChat(chatId);
+    setactiveChatId(chatId);
     setSelectedUserChat(userChat);
   };
 
   const handleBackToListChat = () => {
-    setActiveChat(0);
+    setactiveChatId(0);
     setSelectedUserChat(null);
   };
 
   return (
-    <div>
-      <main className="pt-16 pb-16">
-        <div className="max-w-4/5 mx-auto p-4 sm:p-6 lg:p-8">
-          <div className="bg-[#2D3748] rounded-2xl shadow-2xl flex md:h-[40rem] md:max-h-[40rem]">
+    <div className="bg-[#385484] min-h-screen">
+      <main className="pt-24 pb-16">
+        <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          <div className="bg-[#2D3748] rounded-2xl shadow-2xl flex h-[calc(100vh-200px)]">
             {/* Sidebar */}
             <aside
               className={cn(
-                "w-1/3 min-w-[300px] bg-[#16243B] rounded-l-2xl p-4",
-                selectedUserChat ? "hidden" : "flex flex-col"
+                "w-full md:w-1/3 md:min-w-[300px] bg-[#16243B] rounded-l-2xl p-4 flex-col",
+                selectedUserChat ? "hidden md:flex" : "flex" // Hide on mobile when chat is selected
               )}
             >
               <h1 className="text-2xl font-bold text-white mb-4">Chats</h1>
@@ -198,12 +205,14 @@ const PrivateChatPage = () => {
                   type="text"
                   placeholder="Search or new chat"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setSearchQuery(e.target.value)
+                  }
                   className="!text-white !border-gray-600 focus:!border-blue-500"
                   label=""
                 />
               </div>
-              <div className="flex-grow overflow-y-auto">
+              <div className="flex-grow overflow-y-auto pr-2">
                 {loadingPrivateChats ? (
                   Array(5)
                     .fill(null)
@@ -211,14 +220,10 @@ const PrivateChatPage = () => {
                 ) : !privateChats.data || privateChats.data?.length === 0 ? (
                   <div className="flex flex-col gap-2 items-center">
                     <p className="text-white">
-                      Let's find friends to start chat!
+                      Let's find friends to start a chat!
                     </p>
                     <a href="/friend">
-                      <MyButton
-                        text={"Find"}
-                        variant="secondary"
-                        className="cursor-pointer hover:"
-                      />
+                      <MyButton text={"Find Friends"} variant="secondary" />
                     </a>
                   </div>
                 ) : (
@@ -344,8 +349,8 @@ const PrivateChatPage = () => {
                     Tolong buatin UI buat nyuruh user start chatting or whatever
                   </h1>
                 </div>
-              </section>
-            )}
+              )}
+            </section>
           </div>
         </div>
       </main>

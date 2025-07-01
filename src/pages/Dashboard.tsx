@@ -220,7 +220,11 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
       className={`
         h-[18rem] w-[22rem] text-white bg-primary
         flex flex-col justify-between rounded-xl p-6
-        ${isSelected ? "border-2 border-highlight" : "border-2 border-transparent"}
+        ${
+          isSelected
+            ? "border-2 border-highlight"
+            : "border-2 border-transparent"
+        }
         relative
       `}
     >
@@ -248,4 +252,3 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({
     </div>
   );
 };
-

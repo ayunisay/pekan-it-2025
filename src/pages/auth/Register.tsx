@@ -25,6 +25,8 @@ const Register = () => {
       setShowErrorPopup(true);
       return;
     }
+    setShowErrorPopup(false);
+    setErrorMessage('');  
 
     try {
       await register(inputs);
@@ -34,6 +36,8 @@ const Register = () => {
         navigate('/login');
       }, 1500);
     } catch (e) {
+      setShowSuccessPopup(false)
+
       setErrorMessage('Registration failed. Please try again.');
       setShowErrorPopup(true);
       console.log('Error', e);

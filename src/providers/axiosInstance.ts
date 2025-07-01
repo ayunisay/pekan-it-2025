@@ -15,9 +15,16 @@ export type ResponseType<T> = {
 }
 
 const onRequest = async (config: AxiosRequestConfig): Promise<any> => {
-	// Menentukan Content-Type berdasarkan apakah itu multipart/form-data atau tidak
-	return config
-}
+  //
+  if (config.data instanceof FormData) {
+    if (config.headers) {
+      delete config.headers["Content-Type"];
+    }
+  }
+
+  return config;
+};
+
 
 const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 	return Promise.reject(error)
@@ -61,12 +68,12 @@ const axiosInstance = setupInterceptorsTo(
 	axios.create({
 		baseURL: `${import.meta.env.VITE_BACKEND_URI}/api`,
 		headers: {
-			"Content-Type": "application/json",
+			// "Content-Type": "application/json",
 			"Access-Control-Allow-Origin": "*",
 			// "ngrok-skip-browser-warning": true,
 
 			// temporary //
-			"Cache-Control": "no-cache"
+			// "Cache-Control": "no-cache"
 		},
 	})
 )
