@@ -70,8 +70,8 @@ const GroupChatListItem = React.memo(
               <div className="flex items-center gap-2">
                 <p className="text-sm text-gray-400 truncate">
                   {truncateString(
-                    group.messages[0].author?.username
-                      ? `${group.messages[0].author?.username}: `
+                    group.messages[0].author?.name
+                      ? `${group.messages[0].author?.name}: `
                       : "~"
                   )}
                 </p>
@@ -134,9 +134,9 @@ const DropDownSettingGroup = React.memo(
         <DropdownMenuContent
           onClick={(e) => e.stopPropagation()}
           align="center"
-          className="p-0"
+          className=""
         >
-          <DropdownMenuLabel className="border-b p-1 py-2 text-center">
+          <DropdownMenuLabel className="border-b p-1 my-2 text-center">
             Group setting
           </DropdownMenuLabel>
           <DropdownMenuGroup className="flex flex-col">
@@ -144,7 +144,7 @@ const DropDownSettingGroup = React.memo(
             <Dialog>
               <form>
                 <DialogTrigger asChild>
-                  <div className="flex cursor-pointer hover:bg-primary p-1 py-2 hover:text-slate-50 w-full justify-between items-center">
+                  <div className="flex cursor-pointer hover:bg-primary p-2 hover:text-secondary w-full justify-between items-center rounded-sm">
                     Perbarui
                     <PencilLineIcon />
                   </div>
@@ -250,9 +250,9 @@ const DropDownSettingGroup = React.memo(
               description="Tindakan ini akan menghapus data grup secara permanen dan menghapus."
               handleActionButton={() => handleDelete(group)}
             >
-              <div className="flex cursor-pointer hover:bg-primary p-1 py-2 hover:text-slate-50 w-full justify-between items-center">
+              <div className="flex cursor-pointer hover:bg-primary p-2 hover:text-secondary w-full justify-between items-center rounded-sm group">
                 Hapus
-                <Trash className="text-red-500" />
+                <Trash className="group-hover:text-red-500" />
               </div>
             </DeleteAlertDialog>
           </DropdownMenuGroup>

@@ -25,7 +25,7 @@ type DeleteAlertDialogType = {
             Batalkan
           </AlertDialogCancel>
           <AlertDialogAction
-            className="cursor-pointer"
+            className="cursor-pointer text-slate-50"
             onClick={handleActionButton}
           >
             Lanjutkan

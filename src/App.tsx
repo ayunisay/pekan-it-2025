@@ -23,7 +23,7 @@ function App() {
   const location = useLocation();
   const pathCheck =
     location.pathname.startsWith("/profile") || location.pathname === "/friend";
-  const { user, loading, error } = useGetUser();
+  const { user, loading } = useGetUser();
 
   const [isAppReady, setIsAppReady] = useState(false);
 
@@ -67,8 +67,8 @@ function App() {
             } min-h-screen flex flex-col`}
           >
             <Navbar user={user} />
+            <BaseToaster />
             <main className="flex-grow">
-              <BaseToaster />
               <Routes>
                 <Route index element={<Dashboard />} />
 

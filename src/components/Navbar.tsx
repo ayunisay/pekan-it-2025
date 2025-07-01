@@ -146,14 +146,14 @@ const Navbar = ({ user }: NavbarProps) => {
                 <div className="absolute flex flex-col items-center w-[10rem] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-10 bg-white overflow-hidden">
                   <Link
                     className={cn(
-                      "w-full px-4 p-2 hover:text-slate-50 hover:bg-primary transition-colors duration-200", location.pathname === "/private-chat" && "bg-primary text-slate-50") }
+                      "w-full px-4 p-2 hover:text-secondary hover:bg-primary transition-colors duration-200", location.pathname === "/private-chat" && "bg-primary text-secondary") }
                     to={"/private-chat"}
                   >
                     Private Chat
                   </Link>
                   <Link
                     className={cn(
-                      "w-full px-4 p-2 hover:text-slate-50 hover:bg-primary transition-colors duration-200", location.pathname === "/group-chat" && "bg-primary text-slate-50"
+                      "w-full px-4 p-2 hover:text-secondary hover:bg-primary transition-colors duration-200", location.pathname === "/group-chat" && "bg-primary text-secondary"
                     )}
                     to={"/group-chat"}
                   >

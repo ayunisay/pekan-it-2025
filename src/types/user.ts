@@ -36,12 +36,12 @@ export interface LoginUserType {
 }
 
 export interface FriendReqType {
-  id?: number;
+  id: number;
   requesterId: number;
   receiverId: number;
   status: FriendStatus;
-  createdAt?: string;
-  updatedAt?: string
+  createdAt: string;
+  updatedAt: string
 }
 
 export const FriendStatus = {

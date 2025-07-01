@@ -13,13 +13,7 @@ import type {
   ResponseApiErrorType,
   ResponseApiType,
 } from "../../types/apiType";
-import {
-  Undo2,
-  UserRoundPlus,
-  Users,
-  UsersRound,
-  X,
-} from "lucide-react";
+import { Undo2, UserRoundPlus, Users, UsersRound, X } from "lucide-react";
 import socket from "../../socket/socket";
 import { cn } from "../../utils/cn";
 import MessageBubble from "../../components/chats/MessageBubble";
@@ -68,7 +62,8 @@ const GroupChatPage = () => {
   });
   const [isShowAlert, setIsShowAlert] = useState<boolean>(false);
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState<boolean>(false);
-  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] = useState<boolean>(false);
+  const [isAddMemberDialogOpen, setIsAddMemberDialogOpen] =
+    useState<boolean>(false);
   const [isAddGroupSideOpen, setIsAddGroupSideOpen] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputMessageRef = useRef<HTMLInputElement>(null);
@@ -128,6 +123,7 @@ const GroupChatPage = () => {
     return () => {
       socket.off("connect", handleConnect);
       socket.off("receive new group chat message", handleReceiveMessage);
+      socket.off("send group chat message error", handleSendChatMessageError);
       socket.disconnect();
     };
   }, []);
@@ -234,7 +230,7 @@ const GroupChatPage = () => {
   };
 
   const handleBackToListChat = () => {
-    setIsAddGroupSideOpen(false)
+    setIsAddGroupSideOpen(false);
     setIsGroupInfoOpen(() => false);
     setActiveGroup(0);
     setSelectedGroupChat(null);
@@ -319,7 +315,7 @@ const GroupChatPage = () => {
           (member2) => member2.id !== member.id
         );
         console.log(filteredMember);
-        
+
         setSelectedGroupChat((prev) => {
           if (prev && prev.members) {
             return { ...prev, members: [...filteredMember] };
@@ -348,7 +344,7 @@ const GroupChatPage = () => {
     <UnauthorizedPage />
   ) : (
     <main className="pt-16 pb-16">
-      <div className="max-w-4/5 mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="bg-[#2D3748] rounded-2xl shadow-2xl flex md:h-[40rem] md:max-h-[40rem]">
           {/* Add Group Sidebar */}
           <SideBarAddGroup
@@ -399,8 +395,9 @@ const GroupChatPage = () => {
                     Ayo coba buat grup dengan teman mu!
                   </p>
                   <MyButton
+                    onClick={() => setIsAddGroupSideOpen(true)}
                     text={"Buat"}
-                    variant="secondary"
+                    variant="accent"
                     className="cursor-pointer"
                   />
                 </div>
@@ -462,7 +459,7 @@ const GroupChatPage = () => {
                     ) : (
                       <UsersRound className="w-10 h-10 rounded-full bg-gray-400 p-1 mr-4" />
                     )}
-                    <h2 className="text-lg font-semibold text-white">
+                    <h2 className="text-lg font-semibold text-slate-50">
                       {selectedGroupChat.name}
                     </h2>
                   </div>
@@ -627,7 +624,9 @@ const GroupChatPage = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction className="cursor-pointer">Baik</AlertDialogAction>
+            <AlertDialogAction className="cursor-pointer">
+              Baik
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
