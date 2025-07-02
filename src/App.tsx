@@ -13,20 +13,16 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FindFriend from "./pages/findFriend/FindFriend";
 import Grade from "./pages/grade/Grade";
-import ChatPage from "./pages/chat/ChatPage";
 import TodoList from "./pages/todo/TodoList";
 import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
 
-
 function App() {
   const location = useLocation();
   const pathCheck =
     location.pathname === "/profile" || location.pathname === "/friend";
-    const hideNavbar = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot" || location.pathname === "/forgot2" || location.pathname === "/verifikasi_p" || location.pathname === "/verfikasi_r";
-    const hideFooter = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot" || location.pathname === "/forgot2" || location.pathname === "/verifikasi_p" || location.pathname === "/verfikasi_r";
   const { user, loading, error } = useGetUser();
 
   return (
@@ -41,11 +37,11 @@ function App() {
           <div
             className={`${
               pathCheck
-                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_20%,_#5a7ba8_40%,_theme(colors.tertiary)_60%,_theme(colors.tertiary)_100%)]"
+                ? "bg-[linear-gradient(to_bottom,_theme(colors.primary)_0%,_theme(colors.tertiary)_50%,_theme(colors.tertiary)_70%,_theme(colors.primary)_100%)]"
                 : "bg-tertiary"
             } min-h-screen flex flex-col`}
           >
-            {!hideNavbar && <Navbar user={user} />}
+            <Navbar user={user} />
             <main className="flex-grow">
               <Routes>
                 <Route index element={<Dashboard />} />
@@ -53,23 +49,20 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/forgot" element={<Forgot_pass />} />
-                <Route path="/forgot2" element={<Forgot_pass2 />} />
-                <Route path="/verifikasi_p" element={<Verfikasi_pass />} />
-                <Route path="/verfikasi_r" element={<Verfikasi_regist />} />
                 <Route path="/profile/:username" element={<Profile />} />
 
                 <Route path="/todo" element={<TodoList user={user} />} />
-                <Route path="/todo/detail" element={<TodoDetail />} />
+                {/* <Route path="/todo/detail" element={<TodoDetail />} /> */}
                 <Route path="/todo/post" element={<AddTodo user={user} />} />
                 <Route path="/pomodoro" element={<PomodoroTimer />} />
 
-                <Route path="/find" element={<FindFriend />} />
+                <Route path="/friend" element={<FindFriend user={user} />} />
                 <Route path="/grade" element={<Grade />} />
-                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/private-chat" element={<PrivateChatPage />} />
+                <Route path="/group-chat" element={<GroupChatPage />} />
               </Routes>
             </main>
-              {!hideFooter && <Footer />}
+              <Footer />
             </div>
         )}
       </div>

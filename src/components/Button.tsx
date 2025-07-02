@@ -5,7 +5,7 @@ type ButtonProps = {
   /**
    * @default 'primary'
    */
-  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'accent' ;
+  variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'accent' | 'custom';
   /**
    * @default 'medium'
    */
@@ -57,7 +57,8 @@ export const MyButton: React.FC<ButtonProps> = ({
     secondary: 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:ring-blue-300 rounded-md',
     danger: 'bg-red-600 hover:bg-red-700 active:bg-red-800 text-white shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:ring-red-300 rounded-md',
     outline: 'bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600 hover:text-blue-700 border-2 border-blue-600 hover:border-blue-700 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 focus:ring-blue-300 rounded-md',
-    accent: 'bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-900 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:ring-yellow-300 rounded-full'
+    accent: 'bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-gray-900 shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus:ring-yellow-300 rounded-full',
+    custom: ''
   };
   
   const buttonClasses = `

@@ -23,6 +23,8 @@ const Register = () => {
       setShowErrorPopup(true);
       return;
     }
+    setShowErrorPopup(false);
+    setErrorMessage('');  
 
     try {
       await register(inputs);
@@ -32,7 +34,7 @@ const Register = () => {
         navigate('/verfikasi_r');
       }, 1500);
     } catch (e) {
-      setErrorMessage('Registrasi gagal. Silakan coba lagi.');
+      setErrorMessage('Registration failed. Please try again.');
       setShowErrorPopup(true);
       console.log('Error', e);
     }
