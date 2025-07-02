@@ -3,6 +3,10 @@ import { Dashboard } from "./pages/Dashboard";
 import Auth from "./pages/auth/Auth";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
+import Forgot_pass from "./pages/auth/Forgot_pass";
+import Forgot_pass2 from "./pages/auth/Forgot_pass2";
+import Verfikasi_pass from "./pages/auth/Verfikasi_pass";
+import Verfikasi_regist from "./pages/auth/Verfikasi_regist";
 import Profile from "./pages/profile/Profile";
 import PomodoroTimer from "./pages/pomodoro/Pomodoro";
 import Navbar from "./components/Navbar";
@@ -16,10 +20,13 @@ import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
 
+
 function App() {
   const location = useLocation();
   const pathCheck =
     location.pathname === "/profile" || location.pathname === "/friend";
+    const hideNavbar = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot" || location.pathname === "/forgot2" || location.pathname === "/verifikasi_p" || location.pathname === "/verfikasi_r";
+    const hideFooter = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot" || location.pathname === "/forgot2" || location.pathname === "/verifikasi_p" || location.pathname === "/verfikasi_r";
   const { user, loading, error } = useGetUser();
 
   return (
@@ -38,7 +45,7 @@ function App() {
                 : "bg-tertiary"
             } min-h-screen flex flex-col`}
           >
-            <Navbar user={user} />
+            {!hideNavbar && <Navbar user={user} />}
             <main className="flex-grow">
               <Routes>
                 <Route index element={<Dashboard />} />
@@ -46,6 +53,10 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot" element={<Forgot_pass />} />
+                <Route path="/forgot2" element={<Forgot_pass2 />} />
+                <Route path="/verifikasi_p" element={<Verfikasi_pass />} />
+                <Route path="/verfikasi_r" element={<Verfikasi_regist />} />
                 <Route path="/profile/:username" element={<Profile />} />
 
                 <Route path="/todo" element={<TodoList user={user} />} />
@@ -58,7 +69,7 @@ function App() {
                 <Route path="/chat" element={<ChatPage />} />
               </Routes>
             </main>
-              <Footer />
+              {!hideFooter && <Footer />}
             </div>
         )}
       </div>
