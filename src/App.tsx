@@ -3,6 +3,10 @@ import { Dashboard } from "./pages/Dashboard";
 import Auth from "./pages/auth/Auth";
 import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
+import Forgot_pass from "./pages/auth/Forgot_pass";
+import Forgot_pass2 from "./pages/auth/Forgot_pass2";
+import Verfikasi_pass from "./pages/auth/Verfikasi_pass";
+import Verfikasi_regist from "./pages/auth/Verfikasi_regist";
 import Profile from "./pages/profile/Profile";
 import PomodoroTimer from "./pages/pomodoro/Pomodoro";
 import Navbar from "./components/Navbar";
@@ -14,41 +18,12 @@ import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
-import PrivateChatPage from "./pages/chat/PrivateChatPage";
-import GroupChatPage from "./pages/chat/GroupChatPage";
-import BaseToaster from "./components/systems/BaseToaster";
-import { useEffect, useState } from "react";
 
 function App() {
   const location = useLocation();
   const pathCheck =
-    location.pathname.startsWith("/profile") || location.pathname === "/friend";
-  const { user, loading } = useGetUser();
-
-  const [isAppReady, setIsAppReady] = useState(false);
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      if (!loading) {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setIsAppReady(true);
-      }
-    };
-
-    initializeApp();
-  }, [loading]);
-
-  if (!isAppReady) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-tertiary">
-        <div className="text-center space-y-4">
-          <div className="mt-6">
-            <div className="animate-spin rounded-full h-20 w-20 border-b-2 border-white mx-auto"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+    location.pathname === "/profile" || location.pathname === "/friend";
+  const { user, loading, error } = useGetUser();
 
   return (
     <>
@@ -67,7 +42,6 @@ function App() {
             } min-h-screen flex flex-col`}
           >
             <Navbar user={user} />
-            <BaseToaster />
             <main className="flex-grow">
               <Routes>
                 <Route index element={<Dashboard />} />
@@ -75,10 +49,7 @@ function App() {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
-                <Route
-                  path="/profile/:username"
-                  element={<Profile currentUser={user} />}
-                />
+                <Route path="/profile/:username" element={<Profile />} />
 
                 <Route path="/todo" element={<TodoList user={user} />} />
                 {/* <Route path="/todo/detail" element={<TodoDetail />} /> */}
@@ -91,8 +62,8 @@ function App() {
                 <Route path="/group-chat" element={<GroupChatPage />} />
               </Routes>
             </main>
-            <Footer />
-          </div>
+              <Footer />
+            </div>
         )}
       </div>
     </>
