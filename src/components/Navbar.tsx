@@ -119,8 +119,8 @@ const Navbar = ({ user }: NavbarProps) => {
               </li>
               <li>
                 <Link
-                  to="/find"
-                  className={linkClass("/find")}
+                  to="/friend"
+                  className={linkClass("/friend")}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Find Friends
