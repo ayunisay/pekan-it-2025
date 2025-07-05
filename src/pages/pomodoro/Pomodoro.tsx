@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Play, Pause } from "lucide-react";
 import pomodoroBg from "../../assets/images/pomodor.png";
+import type { UserType } from "../../types/user";
+import { usePomoCookie } from "../../hooks/usePomoCookie";
+import type { TimerType } from "@/types/pomodoroType";
 
-interface TimerState {
-  //model
-  minutes: number;
-  seconds: number;
-  isActive: boolean;
-  isBreak: boolean;
-  cycle: number;
+interface PomodoroProps {
+  user: UserType | null;
 }
 
-const PomodoroTimer: React.FC = () => {
-  const [timer, setTimer] = useState<TimerState>({
+const PomodoroPage: React.FC<PomodoroProps> = ({ user }) => {
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerRef = useRef<TimerType>({
     minutes: 25,
     seconds: 0,
     isActive: false,
@@ -20,120 +20,256 @@ const PomodoroTimer: React.FC = () => {
     cycle: 1,
   });
 
-  const intervalRef = useRef<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { cookieConsentGiven, saveTimerState, loadTimerState } = usePomoCookie();
+
+  const [timer, setTimer] = useState<TimerType>(timerRef.current);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const createBeepSound = () => {
-      const audioContext = new (window.AudioContext ||
-        (window as any).webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.value = 800;
-      oscillator.type = "sine";
-
-      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(
-        0.3,
-        audioContext.currentTime + 0.01,
-      );
-      gainNode.gain.exponentialRampToValueAtTime(
-        0.01,
-        audioContext.currentTime + 0.5,
-      );
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.5);
-    };
-
-    audioRef.current = { play: createBeepSound } as any;
-  }, []);
+    timerRef.current = timer;
+  }, [timer]);
 
   useEffect(() => {
-    if (timer.isActive) {
-      intervalRef.current = setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer.seconds > 0) {
-            return { ...prevTimer, seconds: prevTimer.seconds - 1 };
-          } else if (prevTimer.minutes > 0) {
-            return {
-              ...prevTimer,
-              minutes: prevTimer.minutes - 1,
-              seconds: 59,
-            };
-          } else {
-            if (audioRef.current) {
-              audioRef.current.play();
-            }
+    if (!user || !cookieConsentGiven) {
+      setIsInitialized(true);
+      return;
+    }
+    
+    const savedData = loadTimerState(user.id);
+    if (savedData) {
+      const updatedTimer = {
+        minutes: savedData.minutes,
+        seconds: savedData.seconds,
+        isActive: false,
+        isBreak: savedData.isBreak,
+        cycle: savedData.cycle,
+      };
+      
+      setTimer(updatedTimer);
+      timerRef.current = updatedTimer;
+      
+      console.log("Ui timer:", {
+        wasActive: updatedTimer.isActive,
+        time: `${updatedTimer.minutes}:${updatedTimer.seconds.toString().padStart(2, '0')}`,
+        cycle: updatedTimer.cycle,
+        isBreak: updatedTimer.isBreak
+      });
 
-            const newIsBreak = !prevTimer.isBreak;
-            const newCycle = newIsBreak ? prevTimer.cycle : prevTimer.cycle + 1;
-            const newMinutes = newIsBreak
-              ? newCycle % 4 === 0
-                ? 15
-                : 5 // sampe 4 cycle
-              : 25;
-
-            return {
-              minutes: newMinutes,
-              seconds: 0,
-              isActive: false,
-              isBreak: newIsBreak,
-              cycle: newCycle,
-            };
-          }
-        });
-      }, 1000);
-    } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     }
+    setIsInitialized(true);
+  }, [user, cookieConsentGiven, loadTimerState]);
+
+  useEffect(() => {
+    if (!timer.isActive && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, [timer.isActive]);
+
+  useEffect(() => {
+    if (!isInitialized || !timer.isActive) return;
+
+    intervalRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (!prev.isActive) return prev;
+        
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else {
+          audioRef.current?.play?.();
+          
+          const newIsBreak = !prev.isBreak;
+          const newCycle = newIsBreak ? prev.cycle : prev.cycle + 1;
+          const newMinutes = newIsBreak
+            ? newCycle % 4 === 0 ? 15 : 5
+            : 25;
+
+          const nextTimer = {
+            minutes: newMinutes,
+            seconds: 0,
+            isActive: false,
+            isBreak: newIsBreak,
+            cycle: newCycle,
+          };
+          
+          if (user?.id) {
+            saveTimerState(nextTimer, user.id);
+          }
+          timerRef.current = nextTimer;
+          return nextTimer;
+        }
+      });
+    }, 1000);
 
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [timer.isActive]);
+  }, [isInitialized, timer.isActive, user, saveTimerState]);
+
+  useEffect(() => {
+    if (!timer.isActive || !user || !cookieConsentGiven) return;
+
+    const saveInterval = setInterval(() => {
+      saveTimerState(timerRef.current, user.id);
+    }, 5000);
+
+    return () => {
+      clearInterval(saveInterval);
+    };
+  }, [timer.isActive, user, cookieConsentGiven, saveTimerState]);
+
+  useEffect(() => {
+    if (!user || !cookieConsentGiven) return;
+
+    const handleBeforeUnload = () => {
+      const stoppedTimer = {
+        ...timerRef.current,
+        isActive: false
+      };
+      saveTimerState(stoppedTimer, user.id);
+      
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && timerRef.current.isActive) {
+        const stoppedTimer = {
+          ...timerRef.current,
+          isActive: false
+        };
+        setTimer(stoppedTimer);
+        timerRef.current = stoppedTimer;
+        saveTimerState(stoppedTimer, user.id);
+        
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("pagehide", handleBeforeUnload);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      handleBeforeUnload();
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("pagehide", handleBeforeUnload);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user, cookieConsentGiven, saveTimerState]);
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      if (user?.id) {
+        const stoppedTimer = {
+          ...timerRef.current,
+          isActive: false
+        };
+        saveTimerState(stoppedTimer, user.id);
+      }
+    };
+  }, [user, saveTimerState]);
+
+  useEffect(() => {
+    const createBeepSound = () => {
+      try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 800;
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (error) {
+        console.error("Error creating beep sound:", error);
+      }
+    };
+
+    audioRef.current = { play: createBeepSound } as any;
+  }, []);
 
   const toggleTimer = () => {
-    setTimer((prev) => ({ ...prev, isActive: !prev.isActive }));
+    setTimer((prev) => {
+      const newTimer = { ...prev, isActive: !prev.isActive };
+      if (user?.id) {
+        saveTimerState(newTimer, user.id);
+      }
+      return newTimer;
+    });
   };
 
-  const formatTime = (minutes: number, seconds: number): string => {
-    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  const resetTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    
+    const reset = {
+      minutes: 25,
+      seconds: 0,
+      isActive: false,
+      isBreak: false,
+      cycle: 1,
+    };
+    
+    setTimer(reset);
+    timerRef.current = reset;
+    
+    if (user?.id) {
+      saveTimerState(reset, user.id);
+    }
   };
 
-  const progress = timer.isBreak
-    ? (((timer.cycle % 4 === 0 ? 15 : 5) * 60 -
-        (timer.minutes * 60 + timer.seconds)) /
-        ((timer.cycle % 4 === 0 ? 15 : 5) * 60)) *
-      100
-    : ((25 * 60 - (timer.minutes * 60 + timer.seconds)) / (25 * 60)) * 100;
+  const formatedTime = (m: number, s: number) =>
+    `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+  const totalSec = timer.minutes * 60 + timer.seconds;
+  const maxSec = timer.isBreak
+    ? (timer.cycle % 4 === 0 ? 15 : 5) * 60
+    : 25 * 60;
+  const progress = ((maxSec - totalSec) / maxSec) * 100;
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row justify-center items-center p-4 ">
+    <div className="min-h-screen flex flex-col md:flex-row justify-center items-center p-4 relative">
       <div className="flex flex-col items-center mr-0 md:mr-16 mb-10 md:mb-0">
         <div className="text-center mb-8">
           <span className="font-medium">
             {timer.isBreak
               ? timer.isActive
                 ? "Break?"
-                : "Its Break Time"
+                : "It's Break Time"
               : timer.isActive
-                ? "Time For Focus!"
-                : "Let's Start?"}
+              ? "Time For Focus!"
+              : "Let's Start?"}
           </span>
         </div>
+
         <div className="relative mb-8">
           <div className="w-64 h-64 mx-auto relative">
             <div
-              className={`absolute inset-2 rounded-full bg-cover bg-center ${!timer.isBreak ? "bg-[#F3D67D]" : "bg-[#A9C9FF]"}`}
+              className={`absolute inset-2 rounded-full bg-cover bg-center ${
+                !timer.isBreak ? "bg-[#F3D67D]" : "bg-[#A9C9FF]"
+              }`}
               style={{ backgroundImage: `url(${pomodoroBg})` }}
             ></div>
 
@@ -168,7 +304,7 @@ const PomodoroTimer: React.FC = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
                 <div className="text-5xl font-mono font-bold text-white">
-                  {formatTime(timer.minutes, timer.seconds)}
+                  {formatedTime(timer.minutes, timer.seconds)}
                 </div>
                 <div className="text-sm text-gray-200 mt-2">
                   Cycle {timer.cycle}
@@ -177,6 +313,7 @@ const PomodoroTimer: React.FC = () => {
             </div>
           </div>
         </div>
+
         <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={toggleTimer}
@@ -189,8 +326,16 @@ const PomodoroTimer: React.FC = () => {
             {timer.isActive ? <Pause size={20} /> : <Play size={20} />}
             {timer.isActive ? "Pause" : "Start"}
           </button>
+
+          <button
+            onClick={resetTimer}
+            className="px-6 py-3 rounded-full font-medium transition-all transform hover:scale-105 bg-gray-600 hover:bg-gray-700 text-white shadow-lg"
+          >
+            Reset
+          </button>
         </div>
       </div>
+
       <div className="flex flex-col space-y-4">
         <div className="text-lg font-semibold text-white mb-2">
           Time for today
@@ -198,18 +343,16 @@ const PomodoroTimer: React.FC = () => {
 
         <div className="bg-[rgba(217,217,217,0.2)] rounded-xl shadow-md w-[24rem] h-[4.5rem] flex items-center overflow-hidden">
           <div className="w-2 h-full bg-[#F3C969] rounded-l-xl" />
-          <div className="flex justify-between items-cente w-full px-4 py-3">
+          <div className="flex justify-between items-center w-full px-4 py-3">
             <span className="text-base text-white font-medium">Pomodoro</span>
-            <span className="text-2xl font-bold text-white">30:00</span>
+            <span className="text-2xl font-bold text-white">25:00</span>
           </div>
         </div>
 
         <div className="bg-[rgba(217,217,217,0.2)] rounded-xl shadow-md w-[24rem] h-[4.5rem] flex items-center overflow-hidden">
           <div className="w-2 h-full bg-[#5873A1] rounded-l-xl" />
           <div className="flex justify-between items-center w-full px-4 py-3">
-            <span className="text-base text-white font-medium">
-              Short Break
-            </span>
+            <span className="text-base text-white font-medium">Short Break</span>
             <span className="text-2xl font-bold text-white">05:00</span>
           </div>
         </div>
@@ -226,4 +369,4 @@ const PomodoroTimer: React.FC = () => {
   );
 };
 
-export default PomodoroTimer;
+export default PomodoroPage;
