@@ -1,6 +1,6 @@
 import React from 'react'
-import Login from './Login'
 import Register from './Register'
+import Login from './Login'
 
 const Auth = () => {
     // if(user == null){

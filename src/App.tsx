@@ -16,7 +16,6 @@ import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
-import { LogIn } from "lucide-react";
 import { useCookieConsent } from "./hooks/useCookieConsent";
 import { useEffect, useState } from "react";
 import CookieConsentBanner from "./components/CookieConsent";
@@ -24,6 +23,7 @@ import UnknownRoute from "./pages/UnknownRoute";
 import GroupChatPage from "./pages/chat/GroupChatPage";
 import PrivateChatPage from "./pages/chat/PrivateChatPage";
 import PomodoroPage from "./pages/pomodoro/Pomodoro";
+import Login from "./pages/auth/Login";
 
 function App() {
  const location = useLocation();
@@ -83,7 +83,7 @@ function App() {
 
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<LogIn />} />
+                <Route path="/login" element={<Login />} />
                 <Route
                   path="/profile/:username"
                   element={<Profile currentUser={user} />}
