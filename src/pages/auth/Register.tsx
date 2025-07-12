@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MyForm, MyFormInput } from '../../components/Form';
 import { MyButton } from '../../components/Button';
-import { Link, useNavigate } from 'react-router-dom';
 import MyPopup from '../../components/Popup';
 import { register } from '../../providers/userProvider';
+import { Link, useNavigate } from 'react-router';
 
 const Register = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);

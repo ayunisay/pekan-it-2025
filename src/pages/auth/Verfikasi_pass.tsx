@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { MyButton } from '../../components/Button'
 import { MyForm, MyFormInput } from '../../components/Form'
-import { Link, useNavigate } from 'react-router-dom'
 import MyPopup from '../../components/Popup'
+import { Link, useNavigate } from 'react-router';
 
 
 const Verifikasi_p = () => {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { MyForm, MyFormInput } from '../../components/Form';
 import { MyButton } from '../../components/Button';
-import { Link, useNavigate } from 'react-router-dom';
 import MyPopup from '../../components/Popup';
+import { useNavigate } from 'react-router';
 
 const ForgotPass2 = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);

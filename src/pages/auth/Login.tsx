@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 
 import { MyButton } from "../../components/Button";
@@ -7,6 +6,7 @@ import { MyForm, MyFormInput } from "../../components/Form";
 import MyPopup from "../../components/Popup";
 import { login } from "../../providers/userProvider";
 import useGetUser from "../../hooks/useGetUser";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
