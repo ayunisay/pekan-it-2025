@@ -1,11 +1,10 @@
+import { TODO_EP } from "@/core/endpoints";
 import type { PostTodoType, UpdateTodoType } from "../types/todo";
 import axiosInstance from "./axiosInstance";
 
-const TODO = "todolist";
-
 export const addTodo = async (data: PostTodoType) => {
   try {
-    const res = await axiosInstance.post(`${TODO}/`, data);
+    const res = await axiosInstance.post(`${TODO_EP}/`, data);
     console.log("Data todo: ", res);
     return res.data.data;
   } catch (e) {
@@ -16,7 +15,7 @@ export const addTodo = async (data: PostTodoType) => {
 
 export const getTodoById = async (id: string) => {
   try {
-    const res = await axiosInstance.get(`${TODO}/user/${id}`);
+    const res = await axiosInstance.get(`${TODO_EP}/user/${id}`);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get id API");
@@ -26,7 +25,7 @@ export const getTodoById = async (id: string) => {
 
 export const getTodoByUser = async (id: number) => {
   try {
-    const res = await axiosInstance.get(`${TODO}/user/${id}`);
+    const res = await axiosInstance.get(`${TODO_EP}/user/${id}`);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get user todo API");
@@ -36,7 +35,7 @@ export const getTodoByUser = async (id: number) => {
 
 export const deleteTodo = async (id: string) => {
   try {
-    const res = await axiosInstance.delete(`${TODO}/${id}`);
+    const res = await axiosInstance.delete(`${TODO_EP}/${id}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -47,7 +46,7 @@ export const deleteTodo = async (id: string) => {
 
 export const getTodos = async () => {
   try {
-    const res = await axiosInstance.get(`${TODO}/`);
+    const res = await axiosInstance.get(`${TODO_EP}/`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -58,7 +57,7 @@ export const getTodos = async () => {
 
 export const updateTodo = async (id: number, data: UpdateTodoType) => {
   try {
-    const res = await axiosInstance.put(`${TODO}/${id}`, data);
+    const res = await axiosInstance.put(`${TODO_EP}/${id}`, data);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in update API");

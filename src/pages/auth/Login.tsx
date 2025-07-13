@@ -7,6 +7,7 @@ import MyPopup from "../../components/Popup";
 import { login } from "../../providers/userProvider";
 import useGetUser from "../../hooks/useGetUser";
 import { Link, useNavigate } from "react-router";
+import { TOKEN } from "../../core/appData";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -29,7 +30,7 @@ const Login = () => {
       setErrorMessage("");
       setShowSuccessPopup(true);
 
-      Cookies.set("token", data.token, {
+      Cookies.set(TOKEN, data.token, {
         expires: 7,
         secure: true,
       });

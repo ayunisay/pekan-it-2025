@@ -2,35 +2,32 @@ import { Route, Routes, useLocation } from "react-router";
 import { Dashboard } from "./pages/Dashboard";
 import Auth from "./pages/auth/Auth";
 import Register from "./pages/auth/Register";
-import Forgot_pass from "./pages/auth/Forgot_pass";
-import Forgot_pass2 from "./pages/auth/Forgot_pass2";
-import Verfikasi_pass from "./pages/auth/Verfikasi_pass";
-import Verfikasi_regist from "./pages/auth/Verfikasi_regist";
 import Profile from "./pages/profile/Profile";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import FindFriend from "./pages/findFriend/FindFriend";
 import Grade from "./pages/grade/Grade";
 import TodoList from "./pages/todo/TodoList";
-import TodoDetail from "./pages/todo/TodoDetail";
 import AddTodo from "./pages/todo/AddTodo";
 import useGetUser from "./hooks/useGetUser";
 import { Skeleton } from "./components/ui/skeleton";
 import { useCookieConsent } from "./hooks/useCookieConsent";
 import { useEffect, useState } from "react";
-import CookieConsentBanner from "./components/CookieConsent";
+import PomoConsentBanner from "./components/consent/PomoConsentBanner";
 import UnknownRoute from "./pages/UnknownRoute";
 import GroupChatPage from "./pages/chat/GroupChatPage";
 import PrivateChatPage from "./pages/chat/PrivateChatPage";
 import PomodoroPage from "./pages/pomodoro/Pomodoro";
 import Login from "./pages/auth/Login";
+import Map from "./pages/map/Map";
+import { POMODORO_COOKIE_CONSENT } from "./core/appData";
 
 function App() {
  const location = useLocation();
   const pathCheck =
     location.pathname.startsWith("/profile") || location.pathname === "/friend";
   const { user, loading, error } = useGetUser();
-  const { showCookieConsent, cookieConsentGiven, handleCookieConsent } = useCookieConsent(); //Minta izin cookie
+  const { showCookieConsent, cookieConsentGiven, handleCookieConsent } = useCookieConsent(POMODORO_COOKIE_CONSENT);
   const [isAppReady, setIsAppReady] = useState(false);
 
   useEffect(() => {
@@ -58,7 +55,7 @@ function App() {
   return (
     <>
       <div className="min-h-screen flex flex-col">
-        <CookieConsentBanner
+        <PomoConsentBanner
           showCookieConsent={showCookieConsent}
           handleCookieConsent={handleCookieConsent}
           cookieConsentGiven={cookieConsentGiven}
@@ -98,6 +95,8 @@ function App() {
                 <Route path="/private-chat" element={<PrivateChatPage />} />
                 <Route path="/group-chat" element={<GroupChatPage />} />
                 <Route path="*" element={<UnknownRoute />} />
+
+                <Route path="/map" element={<Map userId={user?.id}/>} />
               </Routes>
             </main>
               <Footer />

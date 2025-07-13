@@ -1,12 +1,10 @@
+import { FRIEND_EP, USER_EP } from "@/core/endpoints.ts";
 import type { FriendReqType, UpdateUserType, UserType } from "../types/user.ts";
 import axiosInstance from "./axiosInstance.ts";
 
-const USER = "users";
-const FRIEND = "friends";
-
 export const register = async (data: any) => {
   try {
-    const res = await axiosInstance.post(`${USER}/`, data);
+    const res = await axiosInstance.post(`${USER_EP}/`, data);
     console.log("Data regis: ", res);
     return res.data.data;
   } catch (e) {
@@ -17,7 +15,7 @@ export const register = async (data: any) => {
 
 export const login = async (data: any) => {
   try {
-    const res = await axiosInstance.post(`${USER}/login`, data);
+    const res = await axiosInstance.post(`${USER_EP}/login`, data);
     console.log("Data login: ", res);
     return res.data.data;
   } catch (e) {
@@ -28,7 +26,7 @@ export const login = async (data: any) => {
 
 export const getUserById = async (id: string) => {
   try {
-    const res = await axiosInstance.get(`${USER}/${id}`);
+    const res = await axiosInstance.get(`${USER_EP}/${id}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -39,7 +37,7 @@ export const getUserById = async (id: string) => {
 
 export const getUserByEmail = async (email: string) => {
   try {
-    const res = await axiosInstance.get(`${USER}/${email}`);
+    const res = await axiosInstance.get(`${USER_EP}/${email}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -50,7 +48,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const deleteUser = async (id: string) => {
   try {
-    const res = await axiosInstance.delete(`${USER}/${id}`);
+    const res = await axiosInstance.delete(`${USER_EP}/${id}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -61,7 +59,7 @@ export const deleteUser = async (id: string) => {
 
 export const getUsers = async () :Promise<UserType[]> => {
   try {
-    const res = await axiosInstance.get(`${USER}/`);
+    const res = await axiosInstance.get(`${USER_EP}/`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -72,7 +70,7 @@ export const getUsers = async () :Promise<UserType[]> => {
 
 export const verifyToken = async (token: any) => {
   try {
-    const res = await axiosInstance.post(`${USER}/verify-token`, { token });
+    const res = await axiosInstance.post(`${USER_EP}/verify-token`, { token });
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in verify token API");
@@ -99,7 +97,7 @@ export const updateUser = async (id: number, data: UpdateUserType) => {
             console.log(key, value);
         }
 
-        const res = await axiosInstance.put(`${USER}/${id}`, formData, {
+        const res = await axiosInstance.put(`${USER_EP}/${id}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -119,7 +117,7 @@ export const updateUser = async (id: number, data: UpdateUserType) => {
 
 export const getUserByUsn = async (username: string) => {
   try {
-    const res = await axiosInstance.get(`${USER}/usn/${username}`);
+    const res = await axiosInstance.get(`${USER_EP}/usn/${username}`);
     // console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -129,11 +127,11 @@ export const getUserByUsn = async (username: string) => {
 };
 
 
-//FRIEND SECTION
+//FRIEND_EP SECTION
 
 export const getFriends = async (id: number, status: string) => {
   try {
-    const res = await axiosInstance.get(`${USER}/${FRIEND}/${id}`, {
+    const res = await axiosInstance.get(`${USER_EP}/${FRIEND_EP}/${id}`, {
       params: {status}
     });
     return res.data.data;
@@ -146,7 +144,7 @@ export const getFriends = async (id: number, status: string) => {
 export const getFriend= async (identifier: any) => { //bisa pake username atau id
   const isNumber = !isNaN(identifier);  
   try {
-    const res = await axiosInstance.get(`${USER}/${FRIEND}/${identifier}?byUsername=${isNumber}`);
+    const res = await axiosInstance.get(`${USER_EP}/${FRIEND_EP}/${identifier}?byUsername=${isNumber}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -157,7 +155,7 @@ export const getFriend= async (identifier: any) => { //bisa pake username atau i
 
 export const requestFriend = async (data:any) => {
   try {
-    const res = await axiosInstance.post(`${USER}/${FRIEND}`, data);
+    const res = await axiosInstance.post(`${USER_EP}/${FRIEND_EP}`, data);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -168,7 +166,7 @@ export const requestFriend = async (data:any) => {
 
 export const updateFriendStatus = async (data: FriendReqType) => {
   try {
-    const res = await axiosInstance.post(`${USER}/${FRIEND}/status`, data);
+    const res = await axiosInstance.post(`${USER_EP}/${FRIEND_EP}/status`, data);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e: any) {
@@ -180,7 +178,7 @@ export const updateFriendStatus = async (data: FriendReqType) => {
 
 export const deleteFriend = async (identifier: any) => {
   try {
-    const res = await axiosInstance.delete(`${USER}/${FRIEND}/${identifier}`);
+    const res = await axiosInstance.delete(`${USER_EP}/${FRIEND_EP}/${identifier}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {

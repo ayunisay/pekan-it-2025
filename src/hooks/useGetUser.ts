@@ -4,6 +4,7 @@ import { verifyToken } from "../providers/userProvider";
 import type { ApiError } from "../types/apiType";
 import { useLocation } from "react-router";
 import type { UpdateUserType, UserType as User } from "../types/user";
+import { TOKEN } from "@/core/appData";
 
 type UseGetUserReturn = {
   user: User | null;
@@ -26,7 +27,7 @@ const useGetUser = (): UseGetUserReturn  => {
   const location = useLocation();
 
   const fetchUser = async (): Promise<void> => {
-    const token: string | undefined = Cookies.get('token');
+    const token: string | undefined = Cookies.get(TOKEN);
     
     if (!token) {
       userCache = null;
@@ -94,7 +95,7 @@ const useGetUser = (): UseGetUserReturn  => {
   };
 
   const logout = (redirectToLogin: boolean = true): void => {
-    Cookies.remove('token');
+    Cookies.remove(TOKEN);
 
     userCache = null;
     lastFetchTime = null;

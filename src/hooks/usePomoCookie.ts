@@ -2,10 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import Cookies from "js-cookie";
 import type { PostPomodoroType, TimerType } from "../types/pomodoroType";
 import { postPomodoro } from "../providers/pomodoroProvider";
-// import { COOKIE_CONSENT_KEY, COOKIE_KEY } from "@/core/appData"; //error gatau kenapa
-
-const COOKIE_KEY = "pomodoro";
-const COOKIE_CONSENT_KEY = "pomodoro_cookie_consent";
+import { POMODORO_COOKIE_CONSENT, POMODORO_COOKIE_KEY } from "@/core/appData";
 
 interface PomodoroSaveState {
   userId: number;
@@ -35,7 +32,7 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
   const [cookieConsentGiven, setCookieConsentGiven] = useState(false);
 
   useEffect(() => {
-    const consent = Cookies.get(COOKIE_CONSENT_KEY);
+    const consent = Cookies.get(POMODORO_COOKIE_CONSENT);
     if (consent === "accepted") {
       setCookieConsentGiven(true);
     } else if (!consent) {
@@ -45,14 +42,14 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
 
   const handleCookieConsent = useCallback((accepted: boolean) => {
     if (accepted) {
-      Cookies.set(COOKIE_CONSENT_KEY, "accepted", {
+      Cookies.set(POMODORO_COOKIE_CONSENT, "accepted", {
         expires: 365,
         secure: true,
         sameSite: "Lax",
       });
       setCookieConsentGiven(true);
     } else {
-      Cookies.set(COOKIE_CONSENT_KEY, "declined", {
+      Cookies.set(POMODORO_COOKIE_CONSENT, "declined", {
         expires: 365,
         secure: true,
         sameSite: "Lax",
@@ -68,9 +65,9 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
 
       try {
         const stored =
-          Cookies.get(COOKIE_KEY) ||
-          localStorage.getItem(COOKIE_KEY) ||
-          sessionStorage.getItem(COOKIE_KEY);
+          Cookies.get(POMODORO_COOKIE_KEY) ||
+          localStorage.getItem(POMODORO_COOKIE_KEY) ||
+          sessionStorage.getItem(POMODORO_COOKIE_KEY);
 
         let prevData: PomodoroSaveState = {
           userId,
@@ -125,7 +122,7 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
         const jsonData = JSON.stringify(prevData);
         
         try {
-          Cookies.set(COOKIE_KEY, jsonData, {
+          Cookies.set(POMODORO_COOKIE_KEY, jsonData, {
             expires: 1,
             path: "/",
             secure: window.location.protocol === 'https:',
@@ -136,13 +133,13 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
         }
 
         try {
-          localStorage.setItem(COOKIE_KEY, jsonData);
+          localStorage.setItem(POMODORO_COOKIE_KEY, jsonData);
         } catch (localStorageError) {
           console.log("Cannot save to localStorage:", localStorageError);
         }
 
         try {
-          sessionStorage.setItem(COOKIE_KEY, jsonData);
+          sessionStorage.setItem(POMODORO_COOKIE_KEY, jsonData);
         } catch (sessionStorageError) {
           console.log("Cannot save to sessionStorage:", sessionStorageError);
         }
@@ -169,9 +166,9 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
           try {
             await postPomodoro(dataToPost);
             
-            Cookies.remove(COOKIE_KEY);
-            localStorage.removeItem(COOKIE_KEY);
-            sessionStorage.removeItem(COOKIE_KEY);
+            Cookies.remove(POMODORO_COOKIE_KEY);
+            localStorage.removeItem(POMODORO_COOKIE_KEY);
+            sessionStorage.removeItem(POMODORO_COOKIE_KEY);
             
             console.log("Cleared storage after sync.");
           } catch (error) {
@@ -193,14 +190,14 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
         let data = null;
         
         try {
-          data = Cookies.get(COOKIE_KEY);
+          data = Cookies.get(POMODORO_COOKIE_KEY);
         } catch (error) {
           console.log("Cannot read from cookies:", error);
         }
 
         if (!data) {
           try {
-            data = localStorage.getItem(COOKIE_KEY);
+            data = localStorage.getItem(POMODORO_COOKIE_KEY);
           } catch (error) {
             console.log("Cannot read from localStorage:", error);
           }
@@ -208,7 +205,7 @@ export const usePomoCookie = (): UsePomoCookieReturn => {
 
         if (!data) {
           try {
-            data = sessionStorage.getItem(COOKIE_KEY);
+            data = sessionStorage.getItem(POMODORO_COOKIE_KEY);
           } catch (error) {
             console.log("Cannot read from sessionStorage:", error);
           }

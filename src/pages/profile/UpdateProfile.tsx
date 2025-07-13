@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import type { UpdateUserType, UserType } from "../../types/user";
 import useGetUser from "../../hooks/useGetUser";
 import usePreviewImg from "../../hooks/usePreviewImg";
+import { TOKEN } from "@/core/appData";
 
 type UpdateProfileProps = {
     user: UpdateUserType
@@ -40,10 +41,10 @@ const UpdateProfile: React.FC<UpdateProfileProps> = ({ onClose, user }) => {
         console.log("Data values:", Object.values(data));
 
         const updated = await updateUser(user.id!, data);
-        console.log("token", updated.token)
+        console.log(TOKEN, updated.token)
         onClose()      
-        Cookies.remove("token");
-        Cookies.set("token", updated.token, {
+        Cookies.remove(TOKEN);
+        Cookies.set(TOKEN, updated.token, {
             expires: 7,
             secure: true,
         });

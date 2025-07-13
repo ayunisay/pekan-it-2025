@@ -1,11 +1,10 @@
 import type { PomodoroType, PostPomodoroType } from "@/types/pomodoroType";
 import axiosInstance from "./axiosInstance";
-
-const POMODORO = "pomodoro";
+import { POMODORO_EP } from "@/core/endpoints";
 
 export const postPomodoro = async (data: PostPomodoroType) => {
   try {
-    const res = await axiosInstance.post(`${POMODORO}`, data);
+    const res = await axiosInstance.post(`${POMODORO_EP}`, data);
     console.log("Data pomodoro: ", res);
     return res.data.data;
   } catch (e) {
@@ -16,7 +15,7 @@ export const postPomodoro = async (data: PostPomodoroType) => {
 
 export const getUserPomodoro = async (id: number) => {
   try {
-    const res = await axiosInstance.get(`${POMODORO}/user/${id}`);
+    const res = await axiosInstance.get(`${POMODORO_EP}/user/${id}`);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get user API");
@@ -26,7 +25,7 @@ export const getUserPomodoro = async (id: number) => {
 
 export const getPomodoroById = async (id: number) => {
   try {
-    const res = await axiosInstance.get(`${POMODORO}/${id}`);
+    const res = await axiosInstance.get(`${POMODORO_EP}/${id}`);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in get ID API");
@@ -36,7 +35,7 @@ export const getPomodoroById = async (id: number) => {
 
 export const deletePomodoro = async (id: number) => {
   try {
-    const res = await axiosInstance.delete(`${POMODORO}/${id}`);
+    const res = await axiosInstance.delete(`${POMODORO_EP}/${id}`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -47,7 +46,7 @@ export const deletePomodoro = async (id: number) => {
 
 export const getPomodoros = async () => {
   try {
-    const res = await axiosInstance.get(`${POMODORO}/`);
+    const res = await axiosInstance.get(`${POMODORO_EP}/`);
     console.log("Data : ", res);
     return res.data.data;
   } catch (e) {
@@ -58,7 +57,7 @@ export const getPomodoros = async () => {
 
 export const updatePomodoro = async (id: number, data: PomodoroType) => {
   try {
-    const res = await axiosInstance.put(`${POMODORO}/${id}`, data);
+    const res = await axiosInstance.put(`${POMODORO_EP}/${id}`, data);
     return res.data.data;
   } catch (e) {
     console.error(e, "Error in update API");
