@@ -1,13 +1,13 @@
 import React from 'react';
 import { X, Check } from 'lucide-react';
 
-interface CookieConsentBannerProps {
+interface PomoConsentBannerProps {
   showCookieConsent: boolean;
   handleCookieConsent: (accepted: boolean) => void;
   cookieConsentGiven: boolean; 
 }
 
-const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
+const PomoConsentBanner: React.FC<PomoConsentBannerProps> = ({
   showCookieConsent,
   handleCookieConsent,
   cookieConsentGiven,
@@ -67,4 +67,4 @@ const CookieConsentBanner: React.FC<CookieConsentBannerProps> = ({
   );
 };
 
-export default CookieConsentBanner;
+export default PomoConsentBanner;
